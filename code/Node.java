@@ -1,11 +1,13 @@
 
-public class Node {
+public class  Node implements Comparable{
 
 private Node parent;
 private int depth;
 private int cost;
 private String state;
 private String operator;
+//The higher the number the higher the priority
+private int priority;
 
 public Node getParent() {
 	return this.parent;
@@ -36,6 +38,10 @@ public String getOperator() {
 }
 public void setOperator(String operator) {
 	this.operator = operator;
+}
+
+public int compareTo(Node a, Node b) {
+	return b.priority - a.priority;
 }
 
 }
