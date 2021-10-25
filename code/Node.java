@@ -1,11 +1,10 @@
 
 public class  Node implements Comparable{
-
 private Node parent;
 private int depth;
 private int cost;
-private String state;
-private String operator;
+private OurState state;
+private NeoOperator operator;
 //The higher the number the higher the priority
 private int priority;
 
@@ -36,7 +35,7 @@ public void setState(String state) {
 public String getOperator() {
 	return this.operator;
 }
-public void setOperator(String operator) {
+public void setOperator(NeoOperator operator) {
 	this.operator = operator;
 }
 
