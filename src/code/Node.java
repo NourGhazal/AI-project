@@ -1,9 +1,12 @@
+package code;
+
+import code.NeoOperator;
 
 public class  Node implements Comparable{
 private Node parent;
 private int depth;
 private int cost;
-private OurState state;
+private String state;
 private NeoOperator operator;
 //The higher the number the higher the priority
 private int priority;
@@ -26,21 +29,22 @@ public int getCost() {
 public void setCost(int cost) {
 	this.cost = cost;
 }
-public String getState() {
+public String getState() {	
 	return this.state;
 }
 public void setState(String state) {
 	this.state = state;
 }
-public String getOperator() {
+public NeoOperator getOperator() {
 	return this.operator;
 }
 public void setOperator(NeoOperator operator) {
 	this.operator = operator;
 }
 
-public int compareTo(Node a, Node b) {
-	return b.priority - a.priority;
+public int compareTo(Object o) {
+	Node b = (Node)o;
+	return b.priority - this.priority;
 }
 
 }
