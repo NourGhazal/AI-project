@@ -2,6 +2,8 @@ package code;
 
 import code.NeoOperator;
 
+import java.util.ArrayList;
+
 public class  Node implements Comparable{
 private Node parent;
 private int depth;
@@ -32,6 +34,319 @@ public void setCost(int cost) {
 public String getState() {	
 	return this.state;
 }
+//Neo location: x,y; Agents killed: x1,y1,x2,y2; damage: x; hostage info: x1,y1,damage1,hostageState1,x2,y2,damage2,hostageState2 ;
+//pills not taken: x1,y1,x2,y2
+//damage in state represents the damage of the hostage if it was not turned into agent
+
+//hostageState in the state represents the state of the hostage:
+//0 -> still hostage and not carried, 1 -> hostage and carried, 2 -> in the booth,
+//3 -> turned into agent and still alive, 4 -> turned into agent and killed, 5 -> killed while being carried by neo
+public int getNeoDamage(){
+	int i=0;
+	//skip 2 semi colons
+	int cntSemiColons=0;
+	while(true){
+		if(state.charAt(i)==';'){
+			cntSemiColons++;
+			i++;
+			if(cntSemiColons==2)break;
+			continue;
+		}
+		i++;
+	}
+	int ans=0;
+	for(;i<state.length();i++){
+		if(state.charAt(i)==';')break;
+		ans*=10;
+		ans+=(state.charAt(i)-'0');
+	}
+	return ans;
+}
+	public int getCarriedHostageCnt(){
+		int i=0;
+		//skip 3 semi colons
+		int cntSemiColons=0;
+		while(true){
+			if(state.charAt(i)==';'){
+				cntSemiColons++;
+				i++;
+				if(cntSemiColons==3)break;
+				continue;
+			}
+			i++;
+		}
+		int ans=0;
+		for(;i<state.length();i++){
+			if(state.charAt(i)==';')break;
+			int hState=0;
+			while(true){
+				if(state.charAt(i)==','){
+					i++;
+					break;
+				}
+			}
+			while(true){
+				if(state.charAt(i)==','){
+					i++;
+					break;
+				}
+			}
+			while(true){
+				if(state.charAt(i)==','){
+					i++;
+					break;
+				}
+			}
+			while(true){
+				if(i==state.length() || state.charAt(i)==',' || state.charAt(i)==';'){
+					if(state.charAt(i)==',')i++;
+					break;
+				}
+				hState*=10;hState+=10;
+			}
+			ans+=hState==1?1:0;
+		}
+		return ans;
+	}
+public int getHostageState(int curx,int cury){
+	int i=0;
+	//skip 3 semi colons
+	int cntSemiColons=0;
+	while(true){
+		if(state.charAt(i)==';'){
+			cntSemiColons++;
+			i++;
+			if(cntSemiColons==3)break;
+			continue;
+		}
+		i++;
+	}
+	for(;i<state.length();i++){
+		if(state.charAt(i)==';')break;
+		int x=0,y=0,hState=0;
+		while(true){
+			if(state.charAt(i)==','){
+				i++;
+				break;
+			}
+			x*=10;x+=10;
+		}
+		while(true){
+			if(state.charAt(i)==','){
+				i++;
+				break;
+			}
+			y*=10;y+=10;
+		}
+		while(true){
+			if(state.charAt(i)==','){
+				i++;
+				break;
+			}
+		}
+		while(true){
+			if(i==state.length() || state.charAt(i)==',' || state.charAt(i)==';'){
+				if(state.charAt(i)==',')i++;
+				break;
+			}
+			hState*=10;hState+=10;
+		}
+		if(x==curx && y==cury)return hState;
+	}
+	return -1;
+}
+public String getHostageInfo(){
+	int i=0;
+	//skip 3 semi colons
+	int cntSemiColons=0;
+	while(true){
+		if(state.charAt(i)==';'){
+			cntSemiColons++;
+			i++;
+			if(cntSemiColons==3)break;
+			continue;
+		}
+		i++;
+	}
+	StringBuilder ans=new StringBuilder();
+	for(;i<state.length();i++){
+		if(state.charAt(i)==';')break;
+		ans.append(state.charAt(i));
+	}
+	return ans.toString();
+}
+public String getAgents(){
+		int i=0;
+		//skip 1 semi colon
+		while(true){
+			if(state.charAt(i)==';'){
+				i++;
+				break;
+			}
+			i++;
+		}
+		StringBuilder ans=new StringBuilder();
+		for(;i<state.length();i++){
+			if(state.charAt(i)==';')break;
+			ans.append(state.charAt(i));
+		}
+		return ans.toString();
+}
+public boolean agentKilled(int x,int y){
+	int i=0;
+	//skip 1 semi colon
+	while(true){
+		if(state.charAt(i)==';'){
+			i++;
+			break;
+		}
+		i++;
+	}
+	int curx=0,cury=0;
+	boolean readx=true;
+	for(;i<state.length();i++){
+		if(state.charAt(i)==';')break;
+		if(state.charAt(i)==','){
+			if(readx){
+				readx=false;
+				continue;
+			}
+			if(curx==x && cury==y)return true;
+			curx=0;cury=0;
+			readx=true;
+			continue;
+		}
+		if(readx) {
+			curx *= 10;
+			curx += (state.charAt(i) - '0');
+		}
+		else{
+			cury *= 10;
+			cury += (state.charAt(i) - '0');
+		}
+	}
+	return false;
+}
+public String getPills(){
+		int i=0;
+		//skip 4 semi colons
+		int cntSemiColons=0;
+		while(true){
+			if(state.charAt(i)==';'){
+				cntSemiColons++;
+				i++;
+				if(cntSemiColons==4)break;
+				continue;
+			}
+			i++;
+		}
+		StringBuilder ans=new StringBuilder();
+		for(;i<state.length();i++){
+			ans.append(state.charAt(i));
+		}
+		return ans.toString();
+	}
+public boolean pillExist(int x,int y){
+	int i=0;
+	//skip 4 semi colons
+	int cntSemiColons=0;
+	while(true){
+		if(state.charAt(i)==';'){
+			cntSemiColons++;
+			i++;
+			if(cntSemiColons==4)break;
+			continue;
+		}
+		i++;
+	}
+	int curx=0,cury=0;
+	boolean readx=true;
+	for(;i<state.length();i++){
+		if(state.charAt(i)==','){
+			if(readx){
+				readx=false;
+				continue;
+			}
+			if(curx==x && cury==y)return true;
+			curx=0;cury=0;
+			readx=true;
+			continue;
+		}
+		if(readx) {
+			curx *= 10;
+			curx += (state.charAt(i) - '0');
+		}
+		else{
+			cury *= 10;
+			cury += (state.charAt(i) - '0');
+		}
+	}
+	return false;
+}
+	public boolean aliveHostageExist(int x,int y){
+		int i=0;
+		//skip 4 semi colons
+		int cntSemiColons=0;
+		while(true){
+			if(state.charAt(i)==';'){
+				cntSemiColons++;
+				i++;
+				if(cntSemiColons==4)break;
+				continue;
+			}
+			i++;
+		}
+		int curx=0,cury=0;
+		boolean readx=true;
+		for(;i<state.length();i++){
+			if(state.charAt(i)==','){
+				if(readx){
+					readx=false;
+					continue;
+				}
+				if(curx==x && cury==y)return true;
+				curx=0;cury=0;
+				readx=true;
+				continue;
+			}
+			if(readx) {
+				curx *= 10;
+				curx += (state.charAt(i) - '0');
+			}
+			else{
+				cury *= 10;
+				cury += (state.charAt(i) - '0');
+			}
+		}
+		return false;
+	}
+public int getNeoLocationX(){
+	int ans=0;
+	for(int i=0;i<state.length();i++){
+		if(state.charAt(i)==',')break;
+		ans*=10;
+		ans+=(state.charAt(i)-'0');
+	}
+	return ans;
+}
+public int getNeoLocationY(){
+	int i=0;
+	while(true){
+		if(state.charAt(i)==','){
+			i++;
+			break;
+		}
+		i++;
+	}
+	int ans=0;
+	for(;i<state.length();i++){
+		if(state.charAt(i)==';')break;
+		ans*=10;
+		ans+=(state.charAt(i)-'0');
+	}
+	return ans;
+}
+
 public void setState(String state) {
 	this.state = state;
 }
@@ -47,4 +362,7 @@ public int compareTo(Object o) {
 	return b.priority - this.priority;
 }
 
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
 }

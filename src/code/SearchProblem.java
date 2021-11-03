@@ -1,12 +1,11 @@
 package code;
 
-import org.w3c.dom.Node;
 
 public abstract class SearchProblem {
 private String initialState;
 private NeoOperator operators;
 private String [] stateSpace;
-public abstract boolean  goalTest(String state);
+public abstract boolean  goalTest(Node cur);
 public abstract int pathCost(String[]actions);
 
 public String getInitialState() {
