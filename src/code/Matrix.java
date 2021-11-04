@@ -28,30 +28,32 @@ public class Matrix extends SearchProblem {
 					i++;
 					break;
 				}
-				x*=10;x+=10;
+				x*=10;x+=hostagesInfo.charAt(i)-'0';
+				i++;
 			}
 			while(true){
 				if(hostagesInfo.charAt(i)==','){
 					i++;
 					break;
 				}
-				y*=10;y+=10;
+				y*=10;y+=hostagesInfo.charAt(i)-'0';
+				i++;
 			}
 			while(true){
 				if(hostagesInfo.charAt(i)==','){
 					i++;
 					break;
 				}
-				damage*=10;damage+=10;
+				damage*=10;damage+=hostagesInfo.charAt(i)-'0';i++;
 			}
 			while(true){
 				if(i==hostagesInfo.length() || hostagesInfo.charAt(i)==','){
-					if(hostagesInfo.charAt(i)==',')i++;
+					if(i<hostagesInfo.length())i++;
 					break;
 				}
-				hState*=10;hState+=10;
+				hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
 			}
-			if(hState!=2 && hState!=4)return false;
+			if(hState!=2 && hState!=4 && hState!=6)return false;
 			if(i==hostagesInfo.length())break;
 		}
 		return isTelephoneBooth(cur.getNeoLocationX(),cur.getNeoLocationY());
@@ -149,7 +151,7 @@ public class Matrix extends SearchProblem {
 			}
 			i++;
 		}
-		for(;i<initState.length();i++){
+		for(;i<initState.length();){
 			if(initState.charAt(i)==';'){
 				break;
 			}
@@ -159,29 +161,34 @@ public class Matrix extends SearchProblem {
 					i++;
 					break;
 				}
-				x*=10;x+=10;
+				x*=10;x+=initState.charAt(i)-'0';
+				i++;
 			}
 			while(true){
 				if(initState.charAt(i)==','){
 					i++;
 					break;
 				}
-				y*=10;y+=10;
+				y*=10;y+=initState.charAt(i)-'0';
+				i++;
 			}
 			while(true){
 				if(initState.charAt(i)==','){
 					i++;
 					break;
 				}
-				tox*=10;tox+=10;
+				tox*=10;tox+=initState.charAt(i)-'0';
+				i++;
 			}
 			while(true){
 				if(i==initState.length() || initState.charAt(i)==',' || initState.charAt(i)==';'){
 					if(initState.charAt(i)==',')i++;
 					break;
 				}
-				toy*=10;toy+=10;
+				toy*=10;toy+=initState.charAt(i)-'0';
+				i++;
 			}
+			if(x==fromx && y==fromy)return new Pair(tox,toy);
 		}
 		return null;
 	}
@@ -226,7 +233,7 @@ public class Matrix extends SearchProblem {
 		}
 		return false;
 	}
-	public String updateHostages(String hostagesInfo,boolean carry,int curx,int cury,boolean drop){
+	public String updateHostages(String hostagesInfo,boolean carry,int curx,int cury,boolean drop,boolean pillTaken,int killx,int killy){
 		StringBuilder ans=new StringBuilder();
 
 		int i=0;
@@ -237,37 +244,49 @@ public class Matrix extends SearchProblem {
 					i++;
 					break;
 				}
-				x*=10;x+=10;
+				x*=10;x+=hostagesInfo.charAt(i)-'0';i++;
 			}
 			while(true){
 				if(hostagesInfo.charAt(i)==','){
 					i++;
 					break;
 				}
-				y*=10;y+=10;
+				y*=10;y+=hostagesInfo.charAt(i)-'0';i++;
 			}
 			while(true){
 				if(hostagesInfo.charAt(i)==','){
 					i++;
 					break;
 				}
-				damage*=10;damage+=10;
+				damage*=10;damage+=hostagesInfo.charAt(i)-'0';i++;
 			}
 			while(true){
 				if(i==hostagesInfo.length() || hostagesInfo.charAt(i)==','){
-					if(hostagesInfo.charAt(i)==',')i++;
+					if(i!=hostagesInfo.length())i++;
 					break;
 				}
-				hState*=10;hState+=10;
+				hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
+			}
+			if(x==killx && y==killy && hState==3){
+				hState=4;
 			}
 			if(carry && curx==x && cury==y){
 				hState=1;
 			}
 			if(drop && (hState==1 || hState==5)){
-				hState=2;
+				if(hState==1) {
+					hState = 2;
+				}
+				else{
+					//hstate==5
+					hState=6;
+				}
 				drop=false;//neo can drop one hostage at a time as the description said
 			}
 			if(hState<2){
+				if(pillTaken){
+					damage=Math.max(0,damage-20);
+				}
 				damage+=2;
 				if(damage>=100){
 					if(hState==0){
@@ -300,7 +319,7 @@ public class Matrix extends SearchProblem {
 		sb.append((x-1)+","+y+";");
 		sb.append(cur.getAgents()+";");
 		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -322,7 +341,7 @@ public class Matrix extends SearchProblem {
 		sb.append((x+1)+","+y+";");
 		sb.append(cur.getAgents()+";");
 		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -344,7 +363,7 @@ public class Matrix extends SearchProblem {
 		sb.append((x)+","+(y-1)+";");
 		sb.append(cur.getAgents()+";");
 		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -366,7 +385,7 @@ public class Matrix extends SearchProblem {
 		sb.append((x)+","+(y+1)+";");
 		sb.append(cur.getAgents()+";");
 		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -388,7 +407,7 @@ public class Matrix extends SearchProblem {
 		sb.append((x)+","+(y)+";");
 		sb.append(cur.getAgents()+";");
 		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),true,x,y,false)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),true,x,y,false,false,-1,-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -407,7 +426,7 @@ public class Matrix extends SearchProblem {
 		sb.append((x)+","+(y)+";");
 		sb.append(cur.getAgents()+";");
 		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,true)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,true,false,-1,-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -427,7 +446,7 @@ public class Matrix extends SearchProblem {
 		sb.append((to.x)+","+(to.y)+";");
 		sb.append(cur.getAgents()+";");
 		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -437,140 +456,169 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.FLY);
 		return ans;
 	}
+	public Node takePill(Node cur){
+		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
 
-	public ArrayList<Node> nextNodes(Node cur){
+		if(!cur.pillExist(x,y)){//we can only take pill if it exists in the grid in x,y
+			return null;
+		}
+		StringBuilder sb=new StringBuilder();
+		sb.append((x)+","+(y)+";");
+		sb.append(cur.getAgents()+";");
+		sb.append(Math.max(0,cur.getNeoDamage()-20)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,-1,-1)+";");
+		sb.append(cur.getPillsWithout(x,y));
+		Node ans=new Node();
+		ans.setDepth(cur.getDepth()+1);
+		ans.setState(sb.toString());
+		ans.setCost(0);//TODO <--------------
+		ans.setParent(cur);
+		ans.setOperator(NeoOperator.TAKEPILL);
+		return ans;
+	}
+	public Node killUp(Node cur){
+		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+
+		if(x==0 || !cellHasAgent(cur,x-1,y)){
+			return null;
+		}
+		StringBuilder sb=new StringBuilder();
+		sb.append((x)+","+(y)+";");
+		sb.append(cur.getAgents());
+		if(agentExist(x-1,y)){
+			sb.append((x-1)+","+y);
+		}
+		sb.append(";");
+		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x-1,y)+";");
+		sb.append(cur.getPills());
+		Node ans=new Node();
+		ans.setDepth(cur.getDepth()+1);
+		ans.setState(sb.toString());
+		ans.setCost(0);//TODO <--------------
+		ans.setParent(cur);
+		ans.setOperator(NeoOperator.KILLUp);
+		return ans;
+	}
+	public Node killDown(Node cur){
+		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+
+		if(x+1==getM() || !cellHasAgent(cur,x+1,y)){
+			return null;
+		}
+		StringBuilder sb=new StringBuilder();
+		sb.append((x)+","+(y)+";");
+		sb.append(cur.getAgents());
+		if(agentExist(x+1,y)){
+			sb.append((x+1)+","+y);
+		}
+		sb.append(";");
+		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x+1,y)+";");
+		sb.append(cur.getPills());
+		Node ans=new Node();
+		ans.setDepth(cur.getDepth()+1);
+		ans.setState(sb.toString());
+		ans.setCost(0);//TODO <--------------
+		ans.setParent(cur);
+		ans.setOperator(NeoOperator.KILLDown);
+		return ans;
+	}
+	public Node killLeft(Node cur){
+		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+
+		if(y==0 || !cellHasAgent(cur,x,y-1)){
+			return null;
+		}
+		StringBuilder sb=new StringBuilder();
+		sb.append((x)+","+(y)+";");
+		sb.append(cur.getAgents());
+		if(agentExist(x,y-1)){
+			sb.append((x)+","+(y-1));
+		}
+		sb.append(";");
+		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x,y-1)+";");
+		sb.append(cur.getPills());
+		Node ans=new Node();
+		ans.setDepth(cur.getDepth()+1);
+		ans.setState(sb.toString());
+		ans.setCost(0);//TODO <--------------
+		ans.setParent(cur);
+		ans.setOperator(NeoOperator.KILLLeft);
+		return ans;
+	}
+	public Node killRight(Node cur){
+		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+
+		if(y+1==getN() || !cellHasAgent(cur,x,y+1)){
+			return null;
+		}
+		StringBuilder sb=new StringBuilder();
+		sb.append((x)+","+(y)+";");
+		sb.append(cur.getAgents());
+		if(agentExist(x,y+1)){
+			sb.append((x)+","+(y+1));
+		}
+		sb.append(";");
+		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x,y+1)+";");
+		sb.append(cur.getPills());
+		Node ans=new Node();
+		ans.setDepth(cur.getDepth()+1);
+		ans.setState(sb.toString());
+		ans.setCost(0);//TODO <--------------
+		ans.setParent(cur);
+		ans.setOperator(NeoOperator.KILLRight);
+		return ans;
+	}
+
+	public ArrayList<Node> Expand(Node cur){
 		ArrayList<Node>ans=new ArrayList<>();
-
+		if(cur.getNeoDamage()>=100)return ans;
+		Node nxt;
+		if((nxt=moveLeft(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=moveRight(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=moveUp(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=moveDown(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=killLeft(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=killUp(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=killRight(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=killDown(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=takePill(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=carry(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=drop(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=fly(cur))!=null){
+			ans.add(nxt);
+		}
 
 
 
 		return ans;
 	}
-	public static String genGrid() {
-		Random rand= new Random();
-		int n = rand.nextInt(11)+5;
-		int m = rand.nextInt(11)+5;
-		int hostageCount = rand.nextInt(8)+3;
-		int c =  rand.nextInt(4)+1;
-		int pillCount = rand.nextInt(hostageCount);
-		//maximum pad count can be the rest of the grid (devided tow because we generate in pairs)
-		int maxPadCount = rand.nextInt(((n*m)-hostageCount-pillCount)/2);
-		int padCount = rand.nextInt(maxPadCount)*2;
-		//maximimum agent count  is the rest of the grid, didn't include neos place beacuse the upper bound is already excluded
-		int agentCount = rand.nextInt((n*m)-hostageCount-pillCount-padCount);
-		//Generating Grid
-		String grid ="";
-		//adding grid dimensions
-		grid+=m+","+n+";";
-		List<Pair> gridLlocation=new ArrayList<Pair>();
-		int neoX = rand.nextInt(m);
-		int neoY = rand.nextInt(n);
-		Pair neoLocation = new Pair(neoX,neoY);
-		gridLlocation.add(neoLocation);
-		//adding Neo Location
-		grid+=neoX+","+neoY+";";
-		while (true){
-			int telephoneX = rand.nextInt(m);
-			int telephoneY = rand.nextInt(n);
-			Pair teleLocation = new Pair(telephoneX,telephoneY);
-			if(!cellTaken(gridLlocation,teleLocation)){
-				gridLlocation.add(teleLocation);
-				//adding telephone location
-				grid+=telephoneX+","+telephoneY+";";
-				break;
-			}
-		}
-		for(int i=0 ;i<agentCount;i++){
-			while (true){
-				int x = rand.nextInt(m);
-				int y = rand.nextInt(n);
-				Pair location = new Pair(x,y);
-				if(!cellTaken(gridLlocation,location)){
-					gridLlocation.add(location);
-					//adding telephone location
-					grid+=x+","+y;
-					break;
-				}
-			}
-			if(i==agentCount-1)
-				grid+=";";
-			else
-				grid+=",";
-		}
-		for(int i=0 ;i<pillCount;i++){
-			while (true){
-				int x = rand.nextInt(m);
-				int y = rand.nextInt(n);
-				Pair location = new Pair(x,y);
-				if(!cellTaken(gridLlocation,location)){
-					gridLlocation.add(location);
-					//adding telephone location
-					grid+=x+","+y;
-					break;
-				}
-			}
-			if(i==pillCount-1)
-				grid+=";";
-			else
-				grid+=",";
-		}
-		for(int i=0 ;i<padCount;i++){
-			while (true){
-				int x = rand.nextInt(m);
-				int y = rand.nextInt(n);
-				Pair location = new Pair(x,y);
-				if(!cellTaken(gridLlocation,location)){
-					gridLlocation.add(location);
-					//adding telephone location
-					grid+=x+","+y;
-					break;
-				}
-			}
-			if(i==padCount-1)
-				grid+=";";
-			else
-				grid+=",";
-		}
 
-		for(int i=0 ;i<hostageCount;i++){
-			while (true){
-				int x = rand.nextInt(m);
-				int y = rand.nextInt(n);
-				int damage = rand.nextInt(99)+1;
-				Pair location = new Pair(x,y);
-				if(!cellTaken(gridLlocation,location)){
-					gridLlocation.add(location);
-					//adding telephone location
-					grid+=x+","+y+","+damage;
-					break;
-				}
-			}
-			if(i==hostageCount-1)
-				grid+=";";
-			else
-				grid+=",";
-		}
-		System.out.println(agentCount);
-		System.out.println(pillCount);
-		System.out.println(padCount);
-		System.out.println(hostageCount);
-		return grid;
-		
-	}
-
-	public static boolean cellTaken(List<Pair> grid,Pair x) {
-		for(int i=0; i<grid.size();i++) {
-			if(grid.get(i).equals(x))
-				return true;
-		}
-		return false;
-	}
-	public static String solve(String grid, String strategy, boolean visualize) {
-		return "";
-	}
-	public static void main(String[]args) {
-		System.out.println(genGrid());
-	}
 }
 
 

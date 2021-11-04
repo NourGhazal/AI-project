@@ -7,7 +7,10 @@ public enum NeoOperator {
 	DOWN,
 	CARRY,
 	DROP,
-	KILL,
+	KILLUp,
+	KILLDown,
+	KILLLeft,
+	KILLRight,
 	FLY,
 	TAKEPILL
 }
