@@ -26,6 +26,23 @@ public class Main {
             }
         }
     }
+    public static Node greedySearch1(SearchProblem problem,int telephoneBoothX,int telephoneBoothY){
+        HeuristicFunction1 func=new HeuristicFunction1();
+        func.setTelephoneBoothx(telephoneBoothX);
+        func.setTelephoneBoothy(telephoneBoothY);
+
+        return bestFirstSearch(problem,func);
+    }
+    public static Node greedySearch2(SearchProblem problem,int telephoneBoothX,int telephoneBoothY){
+        HeuristicFunction2 func=new HeuristicFunction2();
+        func.setTelephoneBoothx(telephoneBoothX);
+        func.setTelephoneBoothy(telephoneBoothY);
+
+        return bestFirstSearch(problem,func);
+    }
+    public static Node bestFirstSearch(SearchProblem problem,QingFunction function){
+        return generalSearch(problem,function,Integer.MAX_VALUE);
+    }
     public static Node depthLimitedSearch(SearchProblem problem,int depth){
         return generalSearch(problem,new DepthLimitedQingFunction(),depth);
     }
@@ -48,12 +65,14 @@ public class Main {
         if(cur.getDepth()==1){
             StringBuilder ans=new StringBuilder();
             ans.append(cur.getOperator().toString());
+            System.out.println(cur.getOperator()+" "+cur.getState()+" "+cur.agentKilled(2,1));
             return ans;
         }
         StringBuilder ans=new StringBuilder();
         ans.append(chosenPath(cur.getParent()));
         ans.append(",");
         ans.append(cur.getOperator().toString());
+        System.out.println(cur.getOperator()+" "+cur.getState()+" "+cur.agentKilled(2,1));
         return ans;
     }
     public static String genGrid() {
@@ -183,24 +202,33 @@ public class Main {
         return false;
     }
     public static String solve(String grid, String strategy, boolean visualize) {
-        if(strategy.equals("ID")) {
-            SearchProblem problem = new Matrix();
-            problem.setInitialState(grid);
-            Node ans = IterativeDeepeningSearch(problem);
-            StringBuilder ret=chosenPath(ans);
-            ret.append(";");
-            ret.append(ans.getDeadHostagesNumber());
-            ret.append(";");
-            ret.append(ans.getKilledHostagesNumber()+ans.agentKilledCnt());
-            ret.append(";");
-            ret.append(totNodes);
-            return ret.toString();
+        Node ans=null;
+        Matrix problem = new Matrix();
+        problem.setInitialState(grid);
+        switch (strategy){
+            case "ID":
+                ans = IterativeDeepeningSearch(problem);
+                break;
+            case "GR1":
+                ans = greedySearch1(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY());
+                break;
+            case "GR2":
+                ans = greedySearch2(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY());
+                break;
         }
-        return "";
+
+        StringBuilder ret=chosenPath(ans);
+        ret.append(";");
+        ret.append(ans.getDeadHostagesNumber());
+        ret.append(";");
+        ret.append(ans.getKilledHostagesNumber()+ans.agentKilledCnt());
+        ret.append(";");
+        ret.append(totNodes);
+        return ret.toString();
     }
     public static void main(String[] args) {
         String sample="5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
-        System.out.println(solve(genGrid(),"ID",false));
+        System.out.println(solve(sample,"GR2",false));
     }
     public static String problemStatetoNodeState(String problemState){
         StringBuilder ans=new StringBuilder();

@@ -317,7 +317,10 @@ public boolean agentKilled(int x,int y){
 	int curx=0,cury=0;
 	boolean readx=true;
 	for(;i<state.length();i++){
-		if(state.charAt(i)==';')break;
+		if(state.charAt(i)==';'){
+			if(!readx && curx==x && cury==y)return true;
+			break;
+		}
 		if(state.charAt(i)==','){
 			if(readx){
 				readx=false;
@@ -355,10 +358,10 @@ public boolean agentKilled(int x,int y){
 			if(state.charAt(i)==';')break;
 			if(state.charAt(i)==','){
 				if(readx){
+					ans++;
 					readx=false;
 					continue;
 				}
-				ans++;
 				readx=true;
 				continue;
 			}

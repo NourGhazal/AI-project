@@ -93,6 +93,61 @@ public class Matrix extends SearchProblem {
 		}
 		return cury==y;
 	}
+	public int getTelephoneBoothX(){
+		String initState=getInitialState();
+		int i=0;
+		//skip 3 semi colons
+		int cntSemiColons=0;
+		while(true){
+			if(initState.charAt(i)==';'){
+				cntSemiColons++;
+				i++;
+				if(cntSemiColons==3)break;
+				continue;
+			}
+			i++;
+		}
+		int curx=0,cury=0;
+		for(;i<initState.length();i++){
+			if(initState.charAt(i)==','){
+				i++;break;
+			}
+			curx*=10;
+			curx+=(initState.charAt(i)-'0');
+		}
+		return curx;
+	}
+	public int getTelephoneBoothY(){
+		String initState=getInitialState();
+		int i=0;
+		//skip 3 semi colons
+		int cntSemiColons=0;
+		while(true){
+			if(initState.charAt(i)==';'){
+				cntSemiColons++;
+				i++;
+				if(cntSemiColons==3)break;
+				continue;
+			}
+			i++;
+		}
+		int curx=0,cury=0;
+		for(;i<initState.length();i++){
+			if(initState.charAt(i)==','){
+				i++;break;
+			}
+			curx*=10;
+			curx+=(initState.charAt(i)-'0');
+		}
+		for(;i<initState.length();i++){
+			if(initState.charAt(i)==';'){
+				break;
+			}
+			cury*=10;
+			cury+=(initState.charAt(i)-'0');
+		}
+		return cury;
+	}
 	public int getM(){
 		int ans=0;
 
@@ -210,6 +265,7 @@ public class Matrix extends SearchProblem {
 		boolean readx=true;
 		for(;i<initState.length();i++){
 			if(initState.charAt(i)==';'){
+				if(!readx && curx==x && cury==y)return true;
 				break;
 			}
 			if(initState.charAt(i)==','){
@@ -400,7 +456,7 @@ public class Matrix extends SearchProblem {
 		if(cur.getHostageState(x,y)!=0){//we can only carry hostages that are still hostage and not carried
 			return null;
 		}
-		if(cur.getCarriedHostageCnt()==getC()){//we can only carry if there is capacity
+		if(cur.getCarriedHostageCnt()>=getC()){//we can only carry if there is capacity
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -419,7 +475,7 @@ public class Matrix extends SearchProblem {
 	}
 	public Node drop(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
-		if(!isTelephoneBooth(x,y)){//we can only drop hostages if neo at booth
+		if(!isTelephoneBooth(x,y) || cur.getCarriedHostageCnt()==0){//we can only drop hostages if neo at booth and neo is carrying hostage
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -484,13 +540,15 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		sb.append(cur.getAgents());
+		String prevAgents=cur.getAgents();
+		sb.append(prevAgents);
 		if(agentExist(x-1,y)){
-			sb.append((x-1)+","+y);
+			if(prevAgents.length()>0)sb.append(",");
+			sb.append((x-1)+","+(y));
 		}
 		sb.append(";");
 		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x-1,y)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x-1,y)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -508,13 +566,15 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		sb.append(cur.getAgents());
+		String prevAgents=cur.getAgents();
+		sb.append(prevAgents);
 		if(agentExist(x+1,y)){
-			sb.append((x+1)+","+y);
+			if(prevAgents.length()>0)sb.append(",");
+			sb.append((x+1)+","+(y));
 		}
 		sb.append(";");
 		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x+1,y)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x+1,y)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -532,13 +592,15 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		sb.append(cur.getAgents());
+		String prevAgents=cur.getAgents();
+		sb.append(prevAgents);
 		if(agentExist(x,y-1)){
+			if(prevAgents.length()>0)sb.append(",");
 			sb.append((x)+","+(y-1));
 		}
 		sb.append(";");
 		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x,y-1)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x,y-1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -556,13 +618,15 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		sb.append(cur.getAgents());
+		String prevAgents=cur.getAgents();
+		sb.append(prevAgents);
 		if(agentExist(x,y+1)){
+			if(prevAgents.length()>0)sb.append(",");
 			sb.append((x)+","+(y+1));
 		}
 		sb.append(";");
 		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,x,y+1)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x,y+1)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -577,6 +641,12 @@ public class Matrix extends SearchProblem {
 		ArrayList<Node>ans=new ArrayList<>();
 		if(cur.getNeoDamage()>=100)return ans;
 		Node nxt;
+		if((nxt=carry(cur))!=null){
+			ans.add(nxt);
+		}
+		if((nxt=drop(cur))!=null){
+			ans.add(nxt);
+		}
 		if((nxt=moveLeft(cur))!=null){
 			ans.add(nxt);
 		}
@@ -602,12 +672,6 @@ public class Matrix extends SearchProblem {
 			ans.add(nxt);
 		}
 		if((nxt=takePill(cur))!=null){
-			ans.add(nxt);
-		}
-		if((nxt=carry(cur))!=null){
-			ans.add(nxt);
-		}
-		if((nxt=drop(cur))!=null){
 			ans.add(nxt);
 		}
 		if((nxt=fly(cur))!=null){
