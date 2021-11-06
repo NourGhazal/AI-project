@@ -360,15 +360,15 @@ public class Matrix extends SearchProblem {
 
 		return ans.toString();
 	}
-	public boolean cellHasAgent(Node cur,int x,int y){
-		return (agentExist(x,y) && !cur.agentKilled(x,y)) || cur.getHostageState(x,y)==3;
+	public boolean cellHasAgent(Node cur,int x,int y,boolean afterOneAction){
+		return (agentExist(x,y) && !cur.agentKilled(x,y)) || cur.getHostageState(x,y,afterOneAction)==3;
 	}
 	public Node moveUp(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
 		if(x==0){//can not move up
 			return null;
 		}
-		if(cellHasAgent(cur,x-1,y)) {
+		if(cellHasAgent(cur,x-1,y,true)) {
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -390,7 +390,7 @@ public class Matrix extends SearchProblem {
 		if(x+1==getM()){//can not move down
 			return null;
 		}
-		if(cellHasAgent(cur,x+1,y)) {
+		if(cellHasAgent(cur,x+1,y,true)) {
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -412,7 +412,7 @@ public class Matrix extends SearchProblem {
 		if(y==0){//can not move Left
 			return null;
 		}
-		if(cellHasAgent(cur,x,y-1)) {
+		if(cellHasAgent(cur,x,y-1,true)) {
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -434,7 +434,7 @@ public class Matrix extends SearchProblem {
 		if(y+1==getN()){//can not move right
 			return null;
 		}
-		if(cellHasAgent(cur,x,y+1)) {
+		if(cellHasAgent(cur,x,y+1,true)) {
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -453,7 +453,7 @@ public class Matrix extends SearchProblem {
 	}
 	public Node carry(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
-		if(cur.getHostageState(x,y)!=0){//we can only carry hostages that are still hostage and not carried
+		if(cur.getHostageState(x,y,false)!=0){//we can only carry hostages that are still hostage and not carried
 			return null;
 		}
 		if(cur.getCarriedHostageCnt()>=getC()){//we can only carry if there is capacity
@@ -535,7 +535,7 @@ public class Matrix extends SearchProblem {
 	public Node killUp(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
 
-		if(x==0 || !cellHasAgent(cur,x-1,y)){
+		if(x==0 || !cellHasAgent(cur,x-1,y,false)){
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -561,7 +561,7 @@ public class Matrix extends SearchProblem {
 	public Node killDown(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
 
-		if(x+1==getM() || !cellHasAgent(cur,x+1,y)){
+		if(x+1==getM() || !cellHasAgent(cur,x+1,y,false)){
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -587,7 +587,7 @@ public class Matrix extends SearchProblem {
 	public Node killLeft(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
 
-		if(y==0 || !cellHasAgent(cur,x,y-1)){
+		if(y==0 || !cellHasAgent(cur,x,y-1,false)){
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
@@ -613,7 +613,7 @@ public class Matrix extends SearchProblem {
 	public Node killRight(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
 
-		if(y+1==getN() || !cellHasAgent(cur,x,y+1)){
+		if(y+1==getN() || !cellHasAgent(cur,x,y+1,false)){
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();

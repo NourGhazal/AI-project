@@ -214,7 +214,7 @@ public int getNeoDamage(){
 		}
 		return ans;
 	}
-public int getHostageState(int curx,int cury){
+public int getHostageState(int curx,int cury,boolean afterOneAction){//afterOneAction get the state after performing one action which increase the damage by 2
 	int i=0;
 	//skip 3 semi colons
 	int cntSemiColons=0;
@@ -262,7 +262,7 @@ public int getHostageState(int curx,int cury){
 			hState*=10;hState+=state.charAt(i)-'0';
 			i++;
 		}
-		if(hState==0 && damage+2>=100)hState=3;
+		if(hState==0 && damage+2>=100 && afterOneAction)hState=3;
 		if(x==curx && y==cury)return hState;
 	}
 	return -1;

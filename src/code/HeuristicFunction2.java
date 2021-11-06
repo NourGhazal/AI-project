@@ -13,11 +13,12 @@ public class HeuristicFunction2 extends QingFunction{
     private int telephoneBoothx,telephoneBoothy;
 
 
-    int h(Node cur){
+    int h(Node cur){//admissable heuristic function -> it never overestimates
         String hostagesInfo=cur.getHostageInfo();
         int ans=0;
         int i=0;
         int neox= cur.getNeoLocationX(),neoy= cur.getNeoLocationY();
+        int maxDist=0;
         while(true){
             int x=0,y=0,damage=0,hState=0;
             while(true){
@@ -52,20 +53,24 @@ public class HeuristicFunction2 extends QingFunction{
             }
             switch (hState){
                 case 0:
-                    ans+=dist(neox,neoy,x,y)+dist(x,y,telephoneBoothx,telephoneBoothy)+1;
+                    int distMoved=dist(neox,neoy,x,y)+dist(x,y,telephoneBoothx,telephoneBoothy);//go to hostage then go to booth
+                    maxDist= Math.min(maxDist,distMoved);
+                    ans+=2;//for the carry and drop
                     break;
                 case 3:
-                    ans+=dist(neox,neoy,x,y)+dist(x,y,telephoneBoothx,telephoneBoothy);
+                    int distMoved2=dist(neox,neoy,x,y)-1+dist(x,y,telephoneBoothx,telephoneBoothy);//go near to hostage then go to booth
+                    maxDist= Math.min(maxDist,distMoved2);
+                    ans+=1;//for the kill
                     break;
                 case 1:
                 case 5:
-                    ans++;
+                    ans++;//for the drop
                     break;
 
             }
             if(i==hostagesInfo.length())break;
         }
-        return ans+dist(neox, neoy, telephoneBoothx,telephoneBoothy);
+        return ans+maxDist;
     }
     int dist(int x1,int y1,int x2,int y2){
         return Math.abs(x1-x2)+Math.abs(y1-y2);
