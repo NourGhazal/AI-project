@@ -45,6 +45,11 @@ public class Main {
     }
     static StringBuilder chosenPath(Node cur){
         if(cur.getParent()==null)return new StringBuilder();
+        if(cur.getDepth()==1){
+            StringBuilder ans=new StringBuilder();
+            ans.append(cur.getOperator().toString());
+            return ans;
+        }
         StringBuilder ans=new StringBuilder();
         ans.append(chosenPath(cur.getParent()));
         ans.append(",");
@@ -98,11 +103,13 @@ public class Main {
                     break;
                 }
             }
-            if(i==agentCount-1)
-                grid+=";";
+            if(i==agentCount-1) {
+
+            }
             else
                 grid+=",";
         }
+        grid += ";";
         for(int i=0 ;i<pillCount;i++){
             while (true){
                 int x = rand.nextInt(m);
@@ -115,11 +122,13 @@ public class Main {
                     break;
                 }
             }
-            if(i==pillCount-1)
-                grid+=";";
+            if(i==pillCount-1) {
+
+            }
             else
                 grid+=",";
         }
+        grid += ";";
         for(int i=0 ;i<padCount;i++){
             while (true){
                 int x = rand.nextInt(m);
@@ -132,12 +141,12 @@ public class Main {
                     break;
                 }
             }
-            if(i==padCount-1)
-                grid+=";";
+            if(i==padCount-1) {
+            }
             else
                 grid+=",";
         }
-
+        grid+=";";
         for(int i=0 ;i<hostageCount;i++){
             while (true){
                 int x = rand.nextInt(m);
@@ -151,8 +160,9 @@ public class Main {
                     break;
                 }
             }
-            if(i==hostageCount-1)
-                grid+=";";
+            if(i==hostageCount-1) {
+
+            }
             else
                 grid+=",";
         }
@@ -160,6 +170,7 @@ public class Main {
         System.out.println(pillCount);
         System.out.println(padCount);
         System.out.println(hostageCount);
+        System.out.println(grid);
         return grid;
 
     }
@@ -188,7 +199,8 @@ public class Main {
         return "";
     }
     public static void main(String[] args) {
-        System.out.println(solve("5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80","ID",false));
+        String sample="5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
+        System.out.println(solve(genGrid(),"ID",false));
     }
     public static String problemStatetoNodeState(String problemState){
         StringBuilder ans=new StringBuilder();
