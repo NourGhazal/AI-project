@@ -50,7 +50,7 @@ public class Main {
         return generalSearch(problem,new DepthFirstQingFunction(),depth);
     }
     public static Node BreadthFirstSearch(SearchProblem problem,int depth){
-        return generalSearch(problem,new DepthFirstQingFunction(),depth);
+        return generalSearch(problem,new BreadthFirstQingFunction(),depth);
     }
     public static Node IterativeDeepeningSearch(SearchProblem problem){
 
@@ -68,43 +68,27 @@ public class Main {
     }
     public static Node DebthFirst(SearchProblem problem){
         totNodes = 0;
-        int prevTotNodes=0;
-        for(int d=0;;d++){
-            Node cur=DepthFirstSearch(problem,d);
-            System.out.println("d = " + d);
-            System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
-            prevTotNodes=totNodes;
-            if(cur!=null){
-                return cur;
-            }
-        }
+        Node cur=DepthFirstSearch(problem,Integer.MAX_VALUE);
+        System.out.println("Nodes = "+(totNodes));
+        return cur;
     }
     public static Node BreadthFirst(SearchProblem problem){
         totNodes = 0;
-        int prevTotNodes=0;
-        for(int d=0;;d++){
-            Node cur=BreadthFirstSearch(problem,d);
-            System.out.println("d = " + d);
-            System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
-            prevTotNodes=totNodes;
-            if(cur!=null){
-                return cur;
-            }
-        }
+        Node cur=BreadthFirstSearch(problem,Integer.MAX_VALUE);
+        System.out.println("Nodes = "+(totNodes));
+        return cur;
     }
     static StringBuilder chosenPath(Node cur){
         if(cur.getParent()==null)return new StringBuilder();
         if(cur.getDepth()==1){
             StringBuilder ans=new StringBuilder();
             ans.append(cur.getOperator().toString());
-            System.out.println(cur.getOperator()+" "+cur.getState()+" "+cur.agentKilled(2,1));
             return ans;
         }
         StringBuilder ans=new StringBuilder();
         ans.append(chosenPath(cur.getParent()));
         ans.append(",");
         ans.append(cur.getOperator().toString());
-        System.out.println(cur.getOperator()+" "+cur.getState()+" "+cur.agentKilled(2,1));
         return ans;
     }
     public static String genGrid() {

@@ -290,6 +290,11 @@ public class Matrix extends SearchProblem {
 		}
 		return false;
 	}
+	static boolean neighbour(int x1,int y1,int x2,int y2){
+		boolean sameRow=x1==x2 && Math.abs(y1-y2)==1;
+		boolean sameCol=y1==y2 && Math.abs(x1-x2)==1;
+		return sameCol || sameRow;
+	}
 	public String updateHostages(String hostagesInfo,boolean carry,int curx,int cury,boolean drop,boolean pillTaken,int killx,int killy){
 		StringBuilder ans=new StringBuilder();
 
@@ -324,7 +329,7 @@ public class Matrix extends SearchProblem {
 				}
 				hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
 			}
-			if(x==killx && y==killy && hState==3){
+			if(neighbour(x,y,killx,killy) && hState==3){
 				hState=4;
 			}
 			if(carry && curx==x && cury==y){
@@ -338,13 +343,14 @@ public class Matrix extends SearchProblem {
 					//hstate==5
 					hState=6;
 				}
-				drop=false;//neo can drop one hostage at a time as the description said
 			}
 			if(hState<2){
 				if(pillTaken){
 					damage=Math.max(0,damage-20);
 				}
-				damage+=2;
+				else {
+					damage += 2;
+				}
 				if(damage>=100){
 					if(hState==0){
 						hState=3;
@@ -533,108 +539,48 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.TAKEPILL);
 		return ans;
 	}
-	public Node killUp(Node cur){
+	public Node kill(Node cur){
 		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
 
-		if(x==0 || !cellHasAgent(cur,x-1,y,false)){
+		if((x==0 || !cellHasAgent(cur,x-1,y,false)) && (x+1==getM() || !cellHasAgent(cur,x+1,y,false))
+				&& (y==0 || !cellHasAgent(cur,x,y-1,false)) && (y+1==getN() || !cellHasAgent(cur,x,y+1,false))){
+			//no neighbouring agent to be killed
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
 		String prevAgents=cur.getAgents();
 		sb.append(prevAgents);
+		boolean empty=prevAgents.length()==0;
 		if(agentExist(x-1,y)){
-			if(prevAgents.length()>0)sb.append(",");
+			if(!empty)sb.append(",");
 			sb.append((x-1)+","+(y));
+			empty=false;
 		}
-		sb.append(";");
-		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x-1,y)+";");
-		sb.append(cur.getPills());
-		Node ans=new Node();
-		ans.setDepth(cur.getDepth()+1);
-		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
-		ans.setParent(cur);
-		ans.setOperator(NeoOperator.KILLUp);
-		return ans;
-	}
-	public Node killDown(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
-
-		if(x+1==getM() || !cellHasAgent(cur,x+1,y,false)){
-			return null;
-		}
-		StringBuilder sb=new StringBuilder();
-		sb.append((x)+","+(y)+";");
-		String prevAgents=cur.getAgents();
-		sb.append(prevAgents);
 		if(agentExist(x+1,y)){
-			if(prevAgents.length()>0)sb.append(",");
+			if(!empty)sb.append(",");
 			sb.append((x+1)+","+(y));
+			empty=false;
 		}
-		sb.append(";");
-		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x+1,y)+";");
-		sb.append(cur.getPills());
-		Node ans=new Node();
-		ans.setDepth(cur.getDepth()+1);
-		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
-		ans.setParent(cur);
-		ans.setOperator(NeoOperator.KILLDown);
-		return ans;
-	}
-	public Node killLeft(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
-
-		if(y==0 || !cellHasAgent(cur,x,y-1,false)){
-			return null;
-		}
-		StringBuilder sb=new StringBuilder();
-		sb.append((x)+","+(y)+";");
-		String prevAgents=cur.getAgents();
-		sb.append(prevAgents);
 		if(agentExist(x,y-1)){
-			if(prevAgents.length()>0)sb.append(",");
+			if(!empty)sb.append(",");
 			sb.append((x)+","+(y-1));
+			empty=false;
 		}
-		sb.append(";");
-		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x,y-1)+";");
-		sb.append(cur.getPills());
-		Node ans=new Node();
-		ans.setDepth(cur.getDepth()+1);
-		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
-		ans.setParent(cur);
-		ans.setOperator(NeoOperator.KILLLeft);
-		return ans;
-	}
-	public Node killRight(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
-
-		if(y+1==getN() || !cellHasAgent(cur,x,y+1,false)){
-			return null;
-		}
-		StringBuilder sb=new StringBuilder();
-		sb.append((x)+","+(y)+";");
-		String prevAgents=cur.getAgents();
-		sb.append(prevAgents);
 		if(agentExist(x,y+1)){
-			if(prevAgents.length()>0)sb.append(",");
+			if(!empty)sb.append(",");
 			sb.append((x)+","+(y+1));
 		}
 		sb.append(";");
 		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x,y+1)+";");
+		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x,y)+";");
 		sb.append(cur.getPills());
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
 		ans.setCost(0);//TODO <--------------
 		ans.setParent(cur);
-		ans.setOperator(NeoOperator.KILLRight);
+		ans.setOperator(NeoOperator.KILL);
 		return ans;
 	}
 
@@ -660,16 +606,7 @@ public class Matrix extends SearchProblem {
 		if((nxt=moveDown(cur))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=killLeft(cur))!=null){
-			ans.add(nxt);
-		}
-		if((nxt=killUp(cur))!=null){
-			ans.add(nxt);
-		}
-		if((nxt=killRight(cur))!=null){
-			ans.add(nxt);
-		}
-		if((nxt=killDown(cur))!=null){
+		if((nxt=kill(cur))!=null){
 			ans.add(nxt);
 		}
 		if((nxt=takePill(cur))!=null){
