@@ -46,12 +46,44 @@ public class Main {
     public static Node depthLimitedSearch(SearchProblem problem,int depth){
         return generalSearch(problem,new DepthLimitedQingFunction(),depth);
     }
+    public static Node DepthFirstSearch(SearchProblem problem,int depth){
+        return generalSearch(problem,new DepthFirstQingFunction(),depth);
+    }
+    public static Node BreadthFirstSearch(SearchProblem problem,int depth){
+        return generalSearch(problem,new DepthFirstQingFunction(),depth);
+    }
     public static Node IterativeDeepeningSearch(SearchProblem problem){
 
         totNodes = 0;
         int prevTotNodes=0;
         for(int d=0;;d++){
             Node cur=depthLimitedSearch(problem,d);
+            System.out.println("d = " + d);
+            System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
+            prevTotNodes=totNodes;
+            if(cur!=null){
+                return cur;
+            }
+        }
+    }
+    public static Node DebthFirst(SearchProblem problem){
+        totNodes = 0;
+        int prevTotNodes=0;
+        for(int d=0;;d++){
+            Node cur=DepthFirstSearch(problem,d);
+            System.out.println("d = " + d);
+            System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
+            prevTotNodes=totNodes;
+            if(cur!=null){
+                return cur;
+            }
+        }
+    }
+    public static Node BreadthFirst(SearchProblem problem){
+        totNodes = 0;
+        int prevTotNodes=0;
+        for(int d=0;;d++){
+            Node cur=BreadthFirstSearch(problem,d);
             System.out.println("d = " + d);
             System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
             prevTotNodes=totNodes;
@@ -206,6 +238,12 @@ public class Main {
         Matrix problem = new Matrix();
         problem.setInitialState(grid);
         switch (strategy){
+            case "BF":
+                ans = BreadthFirst(problem);
+                break;
+            case "DF":
+                ans = DebthFirst(problem);
+                break;
             case "ID":
                 ans = IterativeDeepeningSearch(problem);
                 break;
@@ -228,7 +266,7 @@ public class Main {
     }
     public static void main(String[] args) {
         String sample="5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
-        System.out.println(solve(sample,"GR2",false));
+        System.out.println(solve(sample,"BF",false));
     }
     public static String problemStatetoNodeState(String problemState){
         StringBuilder ans=new StringBuilder();

@@ -8,7 +8,7 @@ private String initialState;
 private NeoOperator operators;
 private String [] stateSpace;
 public abstract boolean  goalTest(Node cur);
-public abstract int pathCost(String[]actions);
+public abstract int pathCost(Node curr, String action);
 public abstract ArrayList<Node> Expand(Node cur);
 
 public String getInitialState() {

@@ -58,7 +58,8 @@ public class Matrix extends SearchProblem {
 		}
 		return isTelephoneBooth(cur.getNeoLocationX(),cur.getNeoLocationY());
 	}
-	public int pathCost(String[]actions){
+	public int pathCost(Node curr, String action){
+
 		return 0;
 	}
 	public boolean isTelephoneBooth(int x,int y){
