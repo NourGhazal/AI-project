@@ -1,9 +1,5 @@
 package code;
 
-import code.NeoOperator;
-
-import java.util.ArrayList;
-
 public class  Node implements Comparable{
 private Node parent;
 private int depth;
@@ -139,7 +135,7 @@ public int getDeadHostagesNumber(){//whether turned into agents and killed or ki
 			hState*=10;hState+=state.charAt(i)-'0';
 			i++;
 		}
-		ans+=(hState==4 || hState==6)?1:0;
+		ans+=(hState>=3)?1:0;
 	}
 	return ans;
 }
@@ -210,7 +206,7 @@ public int getNeoDamage(){
 				hState*=10;hState+=state.charAt(i)-'0';
 				i++;
 			}
-			ans+=hState==1?1:0;
+			ans+=(hState==1 || hState==5)?1:0;
 		}
 		return ans;
 	}
@@ -263,6 +259,7 @@ public int getHostageState(int curx,int cury,boolean afterOneAction){//afterOneA
 			i++;
 		}
 		if(hState==0 && damage+2>=100 && afterOneAction)hState=3;
+		if(hState==1 && damage+2>=100 && afterOneAction)hState=5;
 		if(x==curx && y==cury)return hState;
 	}
 	return -1;
@@ -404,8 +401,8 @@ public String getPills(){
 		StringBuilder ans=new StringBuilder();
 		int curx=0,cury=0;
 		boolean readx=true;
-		for(;i<state.length();i++){
-			if(state.charAt(i)==','){
+		for(;i<=state.length();i++){
+			if(i==state.length() || state.charAt(i)==','){
 				if(readx){
 					readx=false;
 					continue;
@@ -417,7 +414,7 @@ public String getPills(){
 					if(ans.length()>0){
 						ans.append(",");
 					}
-					ans.append(x+","+y);
+					ans.append(curx+","+cury);
 				}
 				curx=0;cury=0;
 				readx=true;
@@ -449,8 +446,8 @@ public String getPills(){
 	}
 	int curx=0,cury=0;
 	boolean readx=true;
-	for(;i<state.length();i++){
-		if(state.charAt(i)==','){
+	for(;i<=state.length();i++){
+		if(i==state.length() || state.charAt(i)==','){
 			if(readx){
 				readx=false;
 				continue;
@@ -471,43 +468,6 @@ public String getPills(){
 	}
 	return false;
 }
-	public boolean aliveHostageExist(int x,int y){
-		int i=0;
-		//skip 4 semi colons
-		int cntSemiColons=0;
-		while(true){
-			if(state.charAt(i)==';'){
-				cntSemiColons++;
-				i++;
-				if(cntSemiColons==4)break;
-				continue;
-			}
-			i++;
-		}
-		int curx=0,cury=0;
-		boolean readx=true;
-		for(;i<state.length();i++){
-			if(state.charAt(i)==','){
-				if(readx){
-					readx=false;
-					continue;
-				}
-				if(curx==x && cury==y)return true;
-				curx=0;cury=0;
-				readx=true;
-				continue;
-			}
-			if(readx) {
-				curx *= 10;
-				curx += (state.charAt(i) - '0');
-			}
-			else{
-				cury *= 10;
-				cury += (state.charAt(i) - '0');
-			}
-		}
-		return false;
-	}
 public int getNeoLocationX(){
 	int ans=0;
 	for(int i=0;i<state.length();i++){
