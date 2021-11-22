@@ -1,6 +1,6 @@
 package code;
 
-public class  Node implements Comparable{
+public class  Node implements Comparable<Node>{
 private Node parent;
 private int depth;
 private int cost;
@@ -25,7 +25,9 @@ public int getCost() {
 	return this.cost;
 }
 public void setCost(int cost) {
-	this.cost = cost;
+	int ans=getDeadHostagesNumber()*226+agentKilledCnt();
+
+	this.cost = ans;
 }
 public String getState() {	
 	return this.state;
@@ -505,14 +507,15 @@ public void setOperator(NeoOperator operator) {
 	this.operator = operator;
 }
 
-public int compareTo(Object o) {
-	Node b = (Node)o;
-	return b.priority - this.priority;
-}
 	public int getPriority() {
 		return this.priority;
 	}
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	@Override
+	public int compareTo(Node o) {
+		return o.priority - this.priority;
 	}
 }

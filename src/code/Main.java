@@ -7,6 +7,7 @@ public class Main {
         String gr="6,6;2;2,4;2,2;0,4,1,4,3,0,4,2;0,1,1,3;4,4,3,1,3,1,4,4;0,0,94,1,2,38,4,1,76,4,0,80";
 
                 System.out.println(Matrix.solve(sample,"BF",true));
+
     }
 
 }

@@ -368,8 +368,8 @@ public class Matrix extends SearchProblem {
 	public boolean cellHasAgent(Node cur,int x,int y,boolean afterOneAction){
 		return (agentExist(x,y) && !cur.agentKilled(x,y)) || cur.getHostageState(x,y,afterOneAction)==3;
 	}
-	public Node moveUp(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node moveUp(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 		if(x==0){//can not move up
 			return null;
 		}
@@ -378,10 +378,10 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x-1)+","+y+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
-		sb.append(cur.getPills());
+		sb.append(agents+";");
+		sb.append(neoDamage+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,false,false,-1,-1)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -390,8 +390,8 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.up);
 		return ans;
 	}
-	public Node moveDown(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node moveDown(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 		if(x+1==getM()){//can not move down
 			return null;
 		}
@@ -400,10 +400,10 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x+1)+","+y+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
-		sb.append(cur.getPills());
+		sb.append(agents+";");
+		sb.append(neoDamage+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,false,false,-1,-1)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -412,8 +412,8 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.down);
 		return ans;
 	}
-	public Node moveLeft(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node moveLeft(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 		if(y==0){//can not move Left
 			return null;
 		}
@@ -422,10 +422,10 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y-1)+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
-		sb.append(cur.getPills());
+		sb.append(agents+";");
+		sb.append(neoDamage+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,false,false,-1,-1)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -434,8 +434,8 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.left);
 		return ans;
 	}
-	public Node moveRight(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node moveRight(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 		if(y+1==getN()){//can not move right
 			return null;
 		}
@@ -444,10 +444,10 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y+1)+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
-		sb.append(cur.getPills());
+		sb.append(agents+";");
+		sb.append(neoDamage+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,false,false,-1,-1)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -456,8 +456,8 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.right);
 		return ans;
 	}
-	public Node carry(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node carry(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 		if(cur.getHostageState(x,y,false)!=0){//we can only carry hostages that are still hostage and not carried
 			return null;
 		}
@@ -466,10 +466,10 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),true,x,y,false,false,-1,-1)+";");
-		sb.append(cur.getPills());
+		sb.append(agents+";");
+		sb.append(neoDamage+";");
+		sb.append(updateHostages(hostageInfo,true,x,y,false,false,-1,-1)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -478,17 +478,17 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.carry);
 		return ans;
 	}
-	public Node drop(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node drop(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 		if(!isTelephoneBooth(x,y) || cur.getCarriedHostageCnt()==0){//we can only drop hostages if neo at booth and neo is carrying hostage
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,true,false,-1,-1)+";");
-		sb.append(cur.getPills());
+		sb.append(agents+";");
+		sb.append(neoDamage+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,true,false,-1,-1)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -497,18 +497,18 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.drop);
 		return ans;
 	}
-	public Node fly(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node fly(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 		Pair to=flyFrom(x,y);
 		if(to==null){//we can only fly if iy exists in the grid in x,y
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((to.x)+","+(to.y)+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(cur.getNeoDamage()+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,-1,-1)+";");
-		sb.append(cur.getPills());
+		sb.append(agents+";");
+		sb.append(neoDamage+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,false,false,-1,-1)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -517,17 +517,17 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.fly);
 		return ans;
 	}
-	public Node takePill(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node takePill(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY){
+		int x=neoX,y=neoY;
 
 		if(!cur.pillExist(x,y)){//we can only take pill if it exists in the grid in x,y
 			return null;
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		sb.append(cur.getAgents()+";");
-		sb.append(Math.max(0,cur.getNeoDamage()-20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,true,-1,-1)+";");
+		sb.append(agents+";");
+		sb.append(Math.max(0,neoDamage-20)+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,false,true,-1,-1)+";");
 		sb.append(cur.getPillsWithout(x,y));
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
@@ -537,11 +537,12 @@ public class Matrix extends SearchProblem {
 		ans.setOperator(NeoOperator.takePill);
 		return ans;
 	}
-	public Node kill(Node cur){
-		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+	public Node kill(Node cur,String agents,int neoDamage,String hostageInfo,String pillsInfo,int neoX,int neoY
+			,boolean agentLeft,boolean agentRight,boolean agentUp,boolean agentDown){
+		int x=neoX,y=neoY;
 
-		if((x==0 || !cellHasAgent(cur,x-1,y,false)) && (x+1==getM() || !cellHasAgent(cur,x+1,y,false))
-				&& (y==0 || !cellHasAgent(cur,x,y-1,false)) && (y+1==getN() || !cellHasAgent(cur,x,y+1,false))){
+		if((x==0 || !agentUp) && (x+1==getM() || !agentDown)
+				&& (y==0 || !agentLeft) && (y+1==getN() || !agentRight)){
 			//no neighbouring agent to be killed
 			return null;
 		}
@@ -550,7 +551,7 @@ public class Matrix extends SearchProblem {
 		}
 		StringBuilder sb=new StringBuilder();
 		sb.append((x)+","+(y)+";");
-		String prevAgents=cur.getAgents();
+		String prevAgents=agents;
 		sb.append(prevAgents);
 		boolean empty=prevAgents.length()==0;
 		if(agentExist(x-1,y) && !cur.agentKilled(x-1,y)){
@@ -573,9 +574,9 @@ public class Matrix extends SearchProblem {
 			sb.append((x)+","+(y+1));
 		}
 		sb.append(";");
-		sb.append(Math.min(100,cur.getNeoDamage()+20)+";");
-		sb.append(updateHostages(cur.getHostageInfo(),false,x,y,false,false,x,y)+";");
-		sb.append(cur.getPills());
+		sb.append(Math.min(100,neoDamage+20)+";");
+		sb.append(updateHostages(hostageInfo,false,x,y,false,false,x,y)+";");
+		sb.append(pillsInfo);
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
@@ -587,33 +588,41 @@ public class Matrix extends SearchProblem {
 
 	public ArrayList<Node> Expand(Node cur){
 		ArrayList<Node>ans=new ArrayList<>();
-		if(cur.getNeoDamage()>=100)return ans;
+		int x=cur.getNeoLocationX(),y=cur.getNeoLocationY();
+		String hostageInfo=cur.getHostageInfo();
+		boolean agentUp=cellHasAgent(cur,x-1,y,false),agentDown=cellHasAgent(cur,x+1,y,false);
+		boolean agentLeft=cellHasAgent(cur,x,y-1,false),agentRight=cellHasAgent(cur,x,y+1,false);
+		String agents=cur.getAgents();
+		int neoDamage=cur.getNeoDamage();
+		String pillsInfo=cur.getPills();
+
+		if(neoDamage>=100)return ans;
 		Node nxt;
-		if((nxt=carry(cur))!=null){
+		if((nxt=carry(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=drop(cur))!=null){
+		if((nxt=drop(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=moveLeft(cur))!=null){
+		if(!agentLeft && (nxt=moveLeft(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=moveRight(cur))!=null){
+		if(!agentRight && (nxt=moveRight(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=moveUp(cur))!=null){
+		if(!agentUp && (nxt=moveUp(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=moveDown(cur))!=null){
+		if(!agentDown && (nxt=moveDown(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=kill(cur))!=null){
+		if((nxt=kill(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y,agentLeft,agentRight,agentUp,agentDown))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=takePill(cur))!=null){
+		if((nxt=takePill(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
-		if((nxt=fly(cur))!=null){
+		if((nxt=fly(cur,agents,neoDamage,hostageInfo,pillsInfo,x,y))!=null){
 			ans.add(nxt);
 		}
 
@@ -632,6 +641,7 @@ public class Matrix extends SearchProblem {
 		Node initNode=new Node();
 		initNode.setDepth(0);
 		initNode.setState(problemStatetoNodeState(problem.getInitialState()));
+		initNode.setCost(0);
 		states.add(initNode.getState());
 		qfunc.QingFunc(initNode,nodes,maxDepth);
 		while(true){
@@ -676,13 +686,14 @@ public class Matrix extends SearchProblem {
 	public static Node IterativeDeepeningSearch(SearchProblem problem){
 
 		totNodes = 0;
-		int prevTotNodes=0;
+//		int prevTotNodes=0;
 		for(int d=0;;d++){
 			Node cur=depthLimitedSearch(problem,d);
-			System.out.println("d = " + d);
-			System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
-			prevTotNodes=totNodes;
+//			System.out.println("d = " + d);
+//			System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
+//			prevTotNodes=totNodes;
 			if(cur!=null){
+				System.out.println("Nodes = "+(totNodes));
 				return cur;
 			}
 		}
@@ -696,6 +707,12 @@ public class Matrix extends SearchProblem {
 	public static Node BreadthFirst(SearchProblem problem){
 		totNodes = 0;
 		Node cur=BreadthFirstSearch(problem,Integer.MAX_VALUE);
+		System.out.println("Nodes = "+(totNodes));
+		return cur;
+	}
+	public static Node UniformCostSearch(SearchProblem problem){
+		totNodes = 0;
+		Node cur=generalSearch(problem,new UCSQingFunction(),Integer.MAX_VALUE);
 		System.out.println("Nodes = "+(totNodes));
 		return cur;
 	}
@@ -867,6 +884,9 @@ public class Matrix extends SearchProblem {
 				break;
 			case "GR2":
 				ans = greedySearch2(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY());
+				break;
+			case "UC":
+				ans = UniformCostSearch(problem);
 				break;
 		}
 		if(ans==null){
