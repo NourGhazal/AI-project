@@ -671,6 +671,12 @@ public class Matrix extends SearchProblem {
 
 		return bestFirstSearch(problem,func);
 	}
+	public static Node AStar1(SearchProblem problem){
+		return generalSearch(problem,new HeuristicFunction3(),Integer.MAX_VALUE);
+	}
+	public static Node AStar2(SearchProblem problem){
+		return generalSearch(problem,new HeuristicFunction4(),Integer.MAX_VALUE);
+	}
 	public static Node bestFirstSearch(SearchProblem problem,QingFunction function){
 		return generalSearch(problem,function,Integer.MAX_VALUE);
 	}
@@ -693,7 +699,6 @@ public class Matrix extends SearchProblem {
 //			System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
 //			prevTotNodes=totNodes;
 			if(cur!=null){
-				System.out.println("Nodes = "+(totNodes));
 				return cur;
 			}
 		}
@@ -701,19 +706,16 @@ public class Matrix extends SearchProblem {
 	public static Node DebthFirst(SearchProblem problem){
 		totNodes = 0;
 		Node cur=DepthFirstSearch(problem,Integer.MAX_VALUE);
-		System.out.println("Nodes = "+(totNodes));
 		return cur;
 	}
 	public static Node BreadthFirst(SearchProblem problem){
 		totNodes = 0;
 		Node cur=BreadthFirstSearch(problem,Integer.MAX_VALUE);
-		System.out.println("Nodes = "+(totNodes));
 		return cur;
 	}
 	public static Node UniformCostSearch(SearchProblem problem){
 		totNodes = 0;
 		Node cur=generalSearch(problem,new UCSQingFunction(),Integer.MAX_VALUE);
-		System.out.println("Nodes = "+(totNodes));
 		return cur;
 	}
 	StringBuilder chosenPath(Node cur,boolean visualize){
@@ -888,10 +890,17 @@ public class Matrix extends SearchProblem {
 			case "UC":
 				ans = UniformCostSearch(problem);
 				break;
+			case "AS1":
+				ans = AStar1(problem);
+				break;
+			case "AS2":
+				ans = AStar2(problem);
+				break;
 		}
 		if(ans==null){
 			return "No Solution";
 		}
+		System.out.println("Nodes = "+(totNodes));
 		StringBuilder ret=chosenPath(ans,visualize);
 		ret.append(";");
 		ret.append(ans.getDeadHostagesNumber());

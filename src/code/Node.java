@@ -27,7 +27,7 @@ public int getCost() {
 public void setCost(int cost) {
 	int ans=getDeadHostagesNumber()*226+agentKilledCnt();
 
-	this.cost = ans;
+	this.cost = ans+((int)1e6);
 }
 public String getState() {	
 	return this.state;
