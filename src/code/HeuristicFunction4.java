@@ -1,7 +1,7 @@
 package code;
 import java.util.PriorityQueue;
 
-public class HeuristicFunction3 extends QingFunction{
+public class HeuristicFunction4 extends QingFunction{
     @Override
     public void QingFunc(Node cur, PriorityQueue<Node> pq, int maxDepth) {
         cur.setPriority(-(cur.getCost()+h(cur)));
@@ -9,7 +9,7 @@ public class HeuristicFunction3 extends QingFunction{
     }
     int h(Node cur){//admissable heuristic function -> it never overestimates
         String hostagesInfo=cur.getHostageInfo();
-        int ans=0;
+        int ans=0,neox=cur.getNeoLocationX(),neoy=cur.getNeoLocationY();
         int i=0;
         while(true){
             int x=0,y=0,damage=0,hState=0;
@@ -47,10 +47,17 @@ public class HeuristicFunction3 extends QingFunction{
                 int distNeeded;
                 //alive
                 ans+=damage;
+                if(hState==0){
+                    //not carried
+                    ans+=dist(neox,neoy,x,y);
+                }
             }
             if(i==hostagesInfo.length())break;
         }
         return ans;
+    }
+    int dist(int x1,int y1,int x2,int y2){
+        return Math.abs(x1-x2)+Math.abs(y1-y2);
     }
 
 }

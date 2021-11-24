@@ -236,7 +236,7 @@ public class Matrix extends SearchProblem {
 			}
 			while(true){
 				if(i==initState.length() || initState.charAt(i)==',' || initState.charAt(i)==';'){
-					if(initState.charAt(i)==',')i++;
+					if(i<initState.length() && initState.charAt(i)==',')i++;
 					break;
 				}
 				toy*=10;toy+=initState.charAt(i)-'0';
@@ -897,10 +897,10 @@ public class Matrix extends SearchProblem {
 				ans = AStar2(problem);
 				break;
 		}
+		System.out.println("Nodes = "+(totNodes));
 		if(ans==null){
 			return "No Solution";
 		}
-		System.out.println("Nodes = "+(totNodes));
 		StringBuilder ret=chosenPath(ans,visualize);
 		ret.append(";");
 		ret.append(ans.getDeadHostagesNumber());
@@ -1123,6 +1123,7 @@ public class Matrix extends SearchProblem {
 		}
 		ArrayList<Integer>hos=new ArrayList<>();
 		String hostageInfo= cur.getHostageInfo();
+		ArrayList<Integer>damages=new ArrayList<>();
 		i=0;
 		if(hostageInfo.length()>0) {
 			hos.add(0);
@@ -1158,11 +1159,15 @@ public class Matrix extends SearchProblem {
 		}
 		for(int j=0;j<hos.size();j+=4){
 			int state=hos.get(j+3);
+			if(state==1){
+				damages.add(hos.get(j+2));
+			}
 			if(state==0 || state==3)
 				ans[hos.get(j)][hos.get(j+1)]="H"+Math.min(hos.get(j+2),100);
 		}
 		System.out.println("__________________________________________________________________________________________");
 		System.out.println("Carried hostage = "+cur.getCarriedHostageCnt()+" / "+c);
+		System.out.println("Damages of Carried hostages = " + damages);
 		System.out.println("Dead Hostages Number = " + cur.getDeadHostagesNumber());
 		System.out.println("agent Killed Cnt = " + cur.agentKilledCnt());
 		System.out.println("Killed Hostages Number = " + cur.getKilledHostagesNumber());
