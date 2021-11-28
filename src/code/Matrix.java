@@ -692,14 +692,20 @@ public class Matrix extends SearchProblem {
 	public static Node IterativeDeepeningSearch(SearchProblem problem){
 
 		totNodes = 0;
-//		int prevTotNodes=0;
+		int prevTotNodes=0,prevLvlNodes=0;
 		for(int d=0;;d++){
 			Node cur=depthLimitedSearch(problem,d);
 //			System.out.println("d = " + d);
 //			System.out.println("Nodes in current depth= "+(totNodes-prevTotNodes));
-//			prevTotNodes=totNodes;
+			int nodesInCurLvl=(totNodes-prevTotNodes);
+			prevTotNodes=totNodes;
 			if(cur!=null){
 				return cur;
+			}
+			if(prevLvlNodes==nodesInCurLvl){
+				//nodes expanded using d-1 are the same as nodes expanded using d, then there is no further nodes to be expanded
+				//hence failure
+				return null;
 			}
 		}
 	}
@@ -908,6 +914,7 @@ public class Matrix extends SearchProblem {
 		ret.append(ans.getKilledHostagesNumber()+ans.agentKilledCnt());
 		ret.append(";");
 		ret.append(totNodes);
+		System.out.println(ret);
 		return ret.toString();
 	}
 	public static String problemStatetoNodeState(String problemState){
