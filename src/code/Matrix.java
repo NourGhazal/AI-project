@@ -59,17 +59,57 @@ public class Matrix extends SearchProblem {
 		return isTelephoneBooth(cur.getNeoLocationX(),cur.getNeoLocationY()) && cur.getNeoDamage()<100;
 	}
 	public int pathCost(Node curr){
-		int ans=curr.getDeadHostagesNumber()*226+curr.agentKilledCnt();
+		int i=0;
+		String hostagesInfo=curr.getHostageInfo();
+		int hosdam = 0;
+		while(true){
+			int x=0,y=0,damage=0,hState=0;
+			while(true){
+				if(hostagesInfo.charAt(i)==','){
+					i++;
+					break;
+				}
+				x*=10;x+=hostagesInfo.charAt(i)-'0';
+				i++;
+			}
+			while(true){
+				if(hostagesInfo.charAt(i)==','){
+					i++;
+					break;
+				}
+				y*=10;y+=hostagesInfo.charAt(i)-'0';
+				i++;
+			}
+			while(true){
+				if(hostagesInfo.charAt(i)==','){
+					i++;
+					break;
+				}
+				damage*=10;damage+=hostagesInfo.charAt(i)-'0';i++;
+			}
 
-
-		int cost = ans+((int)1e6);
-		Node currtemp = curr.getParent();
-		while(currtemp!=null){
-			cost+=currtemp.getCost();
-			currtemp = currtemp.getParent();
+			while(true){
+				if(i==hostagesInfo.length() || hostagesInfo.charAt(i)==','){
+					if(i<hostagesInfo.length())i++;
+					break;
+				}
+				hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
+			}
+			if(hState == 0 || hState == 3 ||hState == 5){
+				hosdam+=damage;
+			}
+			if(i==hostagesInfo.length())break;
 		}
-		curr.setCost(cost);
-		return cost;
+
+		int ans=hosdam+curr.agentKilledCnt();
+//		int cost = ans+((int)1e6);
+//		Node currtemp = curr.getParent();
+//		while(currtemp!=null){
+//			cost+=currtemp.getCost();
+//			currtemp = currtemp.getParent();
+//		}
+		curr.setCost(ans);
+		return ans;
 	}
 	public boolean isTelephoneBooth(int x,int y){
 		String initState=getInitialState();
@@ -361,6 +401,7 @@ public class Matrix extends SearchProblem {
 					damage += 2;
 				}
 				if(damage>=100){
+					damage=100;
 					if(hState==0){
 						hState=3;
 					}
@@ -681,8 +722,12 @@ public class Matrix extends SearchProblem {
 
 		return bestFirstSearch(problem,func);
 	}
-	public static Node AStar1(SearchProblem problem){
-		return generalSearch(problem,new HeuristicFunction3(),Integer.MAX_VALUE);
+	public static Node AStar1(SearchProblem problem,int telephoneBoothX,int telephoneBoothY,ArrayList<Pair>pads){
+		HeuristicFunction3 h3 = new HeuristicFunction3();
+		h3.setTelephoneBoothx(telephoneBoothX);
+		h3.setTelephoneBoothy(telephoneBoothY);
+		h3.setPads(pads);
+		return generalSearch(problem,h3,Integer.MAX_VALUE);
 	}
 	public static Node AStar2(SearchProblem problem){
 		return generalSearch(problem,new HeuristicFunction4(),Integer.MAX_VALUE);
@@ -907,7 +952,7 @@ public class Matrix extends SearchProblem {
 				ans = UniformCostSearch(problem);
 				break;
 			case "AS1":
-				ans = AStar1(problem);
+				ans = AStar1(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY(),Matrix.getPads(grid));;
 				break;
 			case "AS2":
 				ans = AStar2(problem);
@@ -1227,7 +1272,7 @@ public class Matrix extends SearchProblem {
 
 	public static void main(String[]args) {
 		String grid = "5,5;4;1,1;4,1;2,4,0,4,3,2,3,0,4,2,0,1,1,3,2,1;4,0,4,4,1,0;2,0,0,2,0,2,2,0,2;0,0,62,4,3,45,3,3,39,2,3,40";
-		String solution = solve(grid,"GR1",true);
+		String solution = solve(grid,"UC",false);
 		System.out.println("grid\n"+grid);
 		System.out.println("sol\n"+solution);
 	}
