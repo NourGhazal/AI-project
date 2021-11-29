@@ -16,6 +16,8 @@ class Pair{
 }
 
 public class Matrix extends SearchProblem {
+    static int totNodes;
+    static HashSet<String> states;
 	public boolean goalTest(Node cur){
 		String hostagesInfo=cur.getHostageInfo();
 		int i=0;
@@ -56,9 +58,18 @@ public class Matrix extends SearchProblem {
 		}
 		return isTelephoneBooth(cur.getNeoLocationX(),cur.getNeoLocationY()) && cur.getNeoDamage()<100;
 	}
-	public int pathCost(Node curr, String action){
+	public int pathCost(Node curr){
+		int ans=curr.getDeadHostagesNumber()*226+curr.agentKilledCnt();
 
-		return 0;
+
+		int cost = ans+((int)1e6);
+		Node currtemp = curr.getParent();
+		while(currtemp!=null){
+			cost+=currtemp.getCost();
+			currtemp = currtemp.getParent();
+		}
+		curr.setCost(cost);
+		return cost;
 	}
 	public boolean isTelephoneBooth(int x,int y){
 		String initState=getInitialState();
@@ -385,7 +396,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.up);
 		return ans;
@@ -407,7 +418,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.down);
 		return ans;
@@ -429,7 +440,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.left);
 		return ans;
@@ -451,7 +462,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.right);
 		return ans;
@@ -473,7 +484,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.carry);
 		return ans;
@@ -492,7 +503,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.drop);
 		return ans;
@@ -512,7 +523,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.fly);
 		return ans;
@@ -532,7 +543,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.takePill);
 		return ans;
@@ -580,7 +591,7 @@ public class Matrix extends SearchProblem {
 		Node ans=new Node();
 		ans.setDepth(cur.getDepth()+1);
 		ans.setState(sb.toString());
-		ans.setCost(0);//TODO <--------------
+		pathCost(ans);//TODO <--------------
 		ans.setParent(cur);
 		ans.setOperator(NeoOperator.kill);
 		return ans;
@@ -633,8 +644,7 @@ public class Matrix extends SearchProblem {
 
 
 	//added
-	static int totNodes;
-	static HashSet<String> states;
+
 	public static Node generalSearch(SearchProblem problem,QingFunction qfunc,int maxDepth){
 		states=new HashSet<>();
 		PriorityQueue<Node> nodes=new PriorityQueue<>((x, y)->y.getPriority()-x.getPriority());
@@ -657,11 +667,11 @@ public class Matrix extends SearchProblem {
 			}
 		}
 	}
-	public static Node greedySearch1(SearchProblem problem,int telephoneBoothX,int telephoneBoothY){
+	public static Node greedySearch1(SearchProblem problem,int telephoneBoothX,int telephoneBoothY,ArrayList<Pair>pads){
 		HeuristicFunction1 func=new HeuristicFunction1();
 		func.setTelephoneBoothx(telephoneBoothX);
 		func.setTelephoneBoothy(telephoneBoothY);
-
+        func.setPads(pads);
 		return bestFirstSearch(problem,func);
 	}
 	public static Node greedySearch2(SearchProblem problem,int telephoneBoothX,int telephoneBoothY){
@@ -882,7 +892,7 @@ public class Matrix extends SearchProblem {
 				ans = IterativeDeepeningSearch(problem);
 				break;
 			case "GR1":
-				ans = greedySearch1(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY());
+				ans = greedySearch1(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY(),Matrix.getPads(grid));
 				break;
 			case "GR2":
 				ans = greedySearch2(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY());
@@ -910,6 +920,18 @@ public class Matrix extends SearchProblem {
 		ret.append(totNodes);
 		return ret.toString();
 	}
+	public static ArrayList<Pair> getPads(String grid){
+        ArrayList<Pair> pads = new ArrayList<>();
+        String[] arrgrid = grid.split(";");
+        String[] arrPads = arrgrid[6].split(",");
+
+        for (int i =0;i<arrPads.length-1;i+=2){
+            Pair pad = new Pair(Integer.parseInt(arrPads[i]),Integer.parseInt(arrPads[i+1]));
+            pads.add(pad);
+        }
+
+        return pads;
+    }
 	public static String problemStatetoNodeState(String problemState){
 		StringBuilder ans=new StringBuilder();
 		int i=0;
@@ -1002,7 +1024,7 @@ public class Matrix extends SearchProblem {
 
 		return ans.toString();
 	}
-	public void visualize(Node cur){
+		public void visualize(Node cur){
 		String grid=getInitialState();
 		int i=0;
 		int m=0,n=0,c=0;
@@ -1145,19 +1167,19 @@ public class Matrix extends SearchProblem {
 		String[][]ans=new String[m][n];
 
 		ans[tx][ty]="TB";
-		for(int j=0;j<agents.size();j+=2){
+		for(int j=0;j<agents.size()-1;j+=2){
 			if(!cur.agentKilled(agents.get(j),agents.get(j+1)))
 				ans[agents.get(j)][agents.get(j+1)]="A";
 		}
-		for(int j=0;j<pills.size();j+=2){
+		for(int j=0;j<pills.size()-1;j+=2){
 			if(cur.pillExist(pills.get(j), pills.get(j+1)))
 				ans[pills.get(j)][pills.get(j+1)]="P";
 		}
-		for(int j=0;j<pad.size();j+=4){
+		for(int j=0;j<pad.size()-3;j+=4){
 			ans[pad.get(j)][pad.get(j+1)]="PAD"+((j)/4);
 			ans[pad.get(j+2)][pad.get(j+3)]="PAD"+((j)/4);
 		}
-		for(int j=0;j<hos.size();j+=4){
+		for(int j=0;j<hos.size()-3;j+=4){
 			int state=hos.get(j+3);
 			if(state==1){
 				damages.add(hos.get(j+2));
@@ -1195,6 +1217,14 @@ public class Matrix extends SearchProblem {
 		while(s.length()<10)s+=" ";
 		System.out.print(s);
 	}
+
+	public static void main(String[]args) {
+		String grid = "5,5;4;1,1;4,1;2,4,0,4,3,2,3,0,4,2,0,1,1,3,2,1;4,0,4,4,1,0;2,0,0,2,0,2,2,0,2;0,0,62,4,3,45,3,3,39,2,3,40";
+		String solution = solve(grid,"GR1",true);
+		System.out.println("grid\n"+grid);
+		System.out.println("sol\n"+solution);
+	}
+
 }
 
 

@@ -1,5 +1,6 @@
 package code;
 
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class HeuristicFunction1 extends QingFunction{
@@ -12,12 +13,26 @@ public class HeuristicFunction1 extends QingFunction{
     }
     private int telephoneBoothx,telephoneBoothy;
 
+    public void setPads(ArrayList<Pair> pads) {
+        this.pads = pads;
+    }
+
+    private ArrayList<Pair> pads;
 
     int h(Node cur){
         String hostagesInfo=cur.getHostageInfo();
         int ans=0;
         int i=0;
         int neox= cur.getNeoLocationX(),neoy= cur.getNeoLocationY();
+        int mindis = dist(neox,neoy,telephoneBoothx,telephoneBoothy);
+            while (!pads.isEmpty()){
+                Pair padFrom = pads.remove(0);
+                Pair padTo = pads.remove(0);
+                int paddis = dist(neox,neoy,padFrom.x,padFrom.y) + dist(padTo.x,padTo.y,telephoneBoothx,telephoneBoothy)+1;
+                mindis = Math.min(mindis,paddis);
+            }
+
+
         while(true){
             int x=0,y=0,damage=0,hState=0;
             while(true){
@@ -52,10 +67,8 @@ public class HeuristicFunction1 extends QingFunction{
             }
             switch (hState){
                 case 0:
-                    ans+=dist(neox,neoy,x,y)+dist(x,y,telephoneBoothx,telephoneBoothy)+1;
-                    break;
                 case 3:
-                    ans+=dist(neox,neoy,x,y)+dist(x,y,telephoneBoothx,telephoneBoothy);
+                    ans+=2+dist(neox,neoy,x,y);
                     break;
                 case 1:
                 case 5:
@@ -65,7 +78,7 @@ public class HeuristicFunction1 extends QingFunction{
             }
             if(i==hostagesInfo.length())break;
         }
-        return ans+dist(neox, neoy, telephoneBoothx,telephoneBoothy);
+        return ans+mindis+cur.agentKilledCnt();
     }
     int dist(int x1,int y1,int x2,int y2){
         return Math.abs(x1-x2)+Math.abs(y1-y2);

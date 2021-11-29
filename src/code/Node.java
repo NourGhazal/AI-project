@@ -25,9 +25,10 @@ public int getCost() {
 	return this.cost;
 }
 public void setCost(int cost) {
-	int ans=getDeadHostagesNumber()*226+agentKilledCnt();
-
-	this.cost = ans+((int)1e6);
+//	int ans=getDeadHostagesNumber()*226+agentKilledCnt();
+//
+//	this.cost = ans+((int)1e6);
+	this.cost= cost;
 }
 public String getState() {	
 	return this.state;
@@ -37,8 +38,12 @@ public String getState() {
 //damage in state represents the damage of the hostage if it was not turned into agent
 
 //hostageState in the state represents the state of the hostage:
-//0 -> still hostage and not carried, 1 -> hostage and carried, 2 -> in the booth alive,
-//3 -> turned into agent and still alive, 4 -> turned into agent and killed, 5 -> killed while being carried by neo,
+//0 -> still hostage and not carried,
+// 1 -> hostage and carried,
+// 2 -> in the booth alive,
+//3 -> turned into agent and still alive,
+// 4 -> turned into agent and killed,
+// 5 -> killed while being carried by neo,
 //6 -> in the booth dead
 
 public int getKilledHostagesNumber(){//only those who killed by Neo after turning into agents
@@ -162,7 +167,7 @@ public int getNeoDamage(){
 	}
 	return ans;
 }
-	public int getCarriedHostageCnt(){
+public int getCarriedHostageCnt(){
 		int i=0;
 		//skip 3 semi colons
 		int cntSemiColons=0;
@@ -341,7 +346,7 @@ public boolean agentKilled(int x,int y){
 	}
 	return false;
 }
-	public int agentKilledCnt(){
+public int agentKilledCnt(){
 		int i=0;
 		//skip 1 semi colon
 		while(true){
@@ -387,7 +392,7 @@ public String getPills(){
 		}
 		return ans.toString();
 	}
-	public String getPillsWithout(int x,int y){
+public String getPillsWithout(int x,int y){
 		int i=0;
 		//skip 4 semi colons
 		int cntSemiColons=0;
@@ -433,7 +438,7 @@ public String getPills(){
 		}
 		return ans.toString();
 	}
-	public boolean pillExist(int x,int y){
+public boolean pillExist(int x,int y){
 	int i=0;
 	//skip 4 semi colons
 	int cntSemiColons=0;
@@ -496,7 +501,6 @@ public int getNeoLocationY(){
 	}
 	return ans;
 }
-
 public void setState(String state) {
 	this.state = state;
 }
@@ -506,14 +510,12 @@ public NeoOperator getOperator() {
 public void setOperator(NeoOperator operator) {
 	this.operator = operator;
 }
-
-	public int getPriority() {
+public int getPriority() {
 		return this.priority;
 	}
-	public void setPriority(int priority) {
+public void setPriority(int priority) {
 		this.priority = priority;
 	}
-
 	@Override
 	public int compareTo(Node o) {
 		return o.priority - this.priority;
