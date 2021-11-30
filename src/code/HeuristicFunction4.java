@@ -10,7 +10,7 @@ public class HeuristicFunction4 extends QingFunction{
     int h4(Node cur){
         int i=0;
         String hostagesInfo=cur.getHostageInfo();
-        int ans=cur.agentKilledCnt()+cur.getDeadHostagesNumber();
+        int ans=0;
         int hosdam = 0;
         while(true){
             int x=0,y=0,damage=0,hState=0;
@@ -45,11 +45,11 @@ public class HeuristicFunction4 extends QingFunction{
                 }
                 hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
             }
-            if(hState == 0 || hState == 1){
-                ans++;
+            if(hState == 0){
+                ans+=cur.getDepth();
             }
             if(hState == 3 ||hState == 5){
-                ans+=2;
+                ans+=2*cur.getDepth();
             }
             if(i==hostagesInfo.length())break;
         }

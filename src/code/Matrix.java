@@ -103,7 +103,7 @@ public class Matrix extends SearchProblem {
 //
 //		int ans=hosdam+curr.agentKilledCnt();
 
-		int cost = curr.agentKilledCnt()*10+ curr.getDeadHostagesNumber()*100+curr.getDepth();
+		int cost = curr.agentKilledCnt()*curr.getDepth()+ curr.getDeadHostagesNumber()*curr.getDepth()*10+curr.getDepth();
 		if(curr.getParent()!=null)
 		cost += curr.getParent().getCost();
 
@@ -1277,8 +1277,8 @@ public class Matrix extends SearchProblem {
 	}
 
 	public static void main(String[]args) {
-		String grid = "5,5;3;1,3;4,0;0,1,3,2,4,3,2,4,0,4;3,4,3,0,4,2;1,4,1,2,1,2,1,4,0,3,1,0,1,0,0,3;4,4,45,3,3,12,0,2,88";
-		String solution = solve(grid,"AS1",false);
+		String grid = "5,5;2;3,0;4,3;2,1,2,2,3,1,0,0,1,1,4,2,3,3,1,3,0,1;2,4,3,2,3,4,0,4;4,4,4,0,4,0,4,4;1,4,57,2,0,46";
+		String solution = solve(grid,"AS2",false);
 		System.out.println("grid\n"+grid);
 		System.out.println("sol\n"+solution);
 	}

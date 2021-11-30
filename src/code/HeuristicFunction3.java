@@ -70,7 +70,7 @@ public class HeuristicFunction3 extends QingFunction{
                     break;
                 case 1:
                 case 5:
-                    ans++;
+                    ans+=mindis;
                     break;
 
             }
