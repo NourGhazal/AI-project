@@ -870,19 +870,26 @@ public class Matrix extends SearchProblem {
 				grid+=",";
 		}
 		grid += ";";
-		for(int i=0 ;i<padCount;i++){
+		for(int i=0 ;i<padCount-1;i+=2){
 			while (true){
-				int x = rand.nextInt(m);
-				int y = rand.nextInt(n);
-				Pair location = new Pair(x,y);
-				if(!cellTaken(gridLlocation,location)){
+				int x1 = rand.nextInt(m);
+				int y1 = rand.nextInt(n);
+				Pair location = new Pair(x1,y1);
+                int x2 = rand.nextInt(m);
+                int y2 = rand.nextInt(n);
+                Pair location2 = new Pair(x1,y1);
+				if(!cellTaken(gridLlocation,location)&&!cellTaken(gridLlocation,location2)){
 					gridLlocation.add(location);
+                    gridLlocation.add(location2);
 					//adding telephone location
-					grid+=x+","+y;
+					grid+=x1+","+y1;
+					grid+=','+x2+","+y2;
+                    grid+=','+x2+","+y2;
+                    grid+=","+x1+","+y1;
 					break;
 				}
 			}
-			if(i==padCount-1) {
+			if(i==padCount-2) {
 			}
 			else
 				grid+=",";
@@ -1075,7 +1082,7 @@ public class Matrix extends SearchProblem {
 
 		return ans.toString();
 	}
-		public void visualize(Node cur){
+	public void visualize(Node cur){
 		String grid=getInitialState();
 		int i=0;
 		int m=0,n=0,c=0;
