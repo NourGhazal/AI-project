@@ -59,57 +59,56 @@ public class Matrix extends SearchProblem {
 		return isTelephoneBooth(cur.getNeoLocationX(),cur.getNeoLocationY()) && cur.getNeoDamage()<100;
 	}
 	public int pathCost(Node curr){
-		int i=0;
-		String hostagesInfo=curr.getHostageInfo();
-		int hosdam = 0;
-		while(true){
-			int x=0,y=0,damage=0,hState=0;
-			while(true){
-				if(hostagesInfo.charAt(i)==','){
-					i++;
-					break;
-				}
-				x*=10;x+=hostagesInfo.charAt(i)-'0';
-				i++;
-			}
-			while(true){
-				if(hostagesInfo.charAt(i)==','){
-					i++;
-					break;
-				}
-				y*=10;y+=hostagesInfo.charAt(i)-'0';
-				i++;
-			}
-			while(true){
-				if(hostagesInfo.charAt(i)==','){
-					i++;
-					break;
-				}
-				damage*=10;damage+=hostagesInfo.charAt(i)-'0';i++;
-			}
-
-			while(true){
-				if(i==hostagesInfo.length() || hostagesInfo.charAt(i)==','){
-					if(i<hostagesInfo.length())i++;
-					break;
-				}
-				hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
-			}
-			if(hState == 0 || hState == 3 ||hState == 5){
-				hosdam+=damage;
-			}
-			if(i==hostagesInfo.length())break;
-		}
-
-		int ans=hosdam+curr.agentKilledCnt();
-//		int cost = ans+((int)1e6);
-//		Node currtemp = curr.getParent();
-//		while(currtemp!=null){
-//			cost+=currtemp.getCost();
-//			currtemp = currtemp.getParent();
+//		int i=0;
+//		String hostagesInfo=curr.getHostageInfo();
+//		int hosdam = 0;
+//		while(true){
+//			int x=0,y=0,damage=0,hState=0;
+//			while(true){
+//				if(hostagesInfo.charAt(i)==','){
+//					i++;
+//					break;
+//				}
+//				x*=10;x+=hostagesInfo.charAt(i)-'0';
+//				i++;
+//			}
+//			while(true){
+//				if(hostagesInfo.charAt(i)==','){
+//					i++;
+//					break;
+//				}
+//				y*=10;y+=hostagesInfo.charAt(i)-'0';
+//				i++;
+//			}
+//			while(true){
+//				if(hostagesInfo.charAt(i)==','){
+//					i++;
+//					break;
+//				}
+//				damage*=10;damage+=hostagesInfo.charAt(i)-'0';i++;
+//			}
+//
+//			while(true){
+//				if(i==hostagesInfo.length() || hostagesInfo.charAt(i)==','){
+//					if(i<hostagesInfo.length())i++;
+//					break;
+//				}
+//				hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
+//			}
+//			if(hState == 0 || hState == 3 ||hState == 5){
+//				hosdam+=damage;
+//			}
+//			if(i==hostagesInfo.length())break;
 //		}
-		curr.setCost(ans);
-		return ans;
+//
+//		int ans=hosdam+curr.agentKilledCnt();
+
+		int cost = curr.agentKilledCnt()*10+ curr.getDeadHostagesNumber()*100+curr.getDepth();
+		if(curr.getParent()!=null)
+		cost += curr.getParent().getCost();
+
+		curr.setCost(cost);
+		return cost;
 	}
 	public boolean isTelephoneBooth(int x,int y){
 		String initState=getInitialState();
@@ -1271,8 +1270,8 @@ public class Matrix extends SearchProblem {
 	}
 
 	public static void main(String[]args) {
-		String grid = "5,5;4;1,1;4,1;2,4,0,4,3,2,3,0,4,2,0,1,1,3,2,1;4,0,4,4,1,0;2,0,0,2,0,2,2,0,2;0,0,62,4,3,45,3,3,39,2,3,40";
-		String solution = solve(grid,"UC",false);
+		String grid = "5,5;3;1,3;4,0;0,1,3,2,4,3,2,4,0,4;3,4,3,0,4,2;1,4,1,2,1,2,1,4,0,3,1,0,1,0,0,3;4,4,45,3,3,12,0,2,88";
+		String solution = solve(grid,"AS1",false);
 		System.out.println("grid\n"+grid);
 		System.out.println("sol\n"+solution);
 	}

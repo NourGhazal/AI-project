@@ -67,8 +67,10 @@ public class HeuristicFunction1 extends QingFunction{
             }
             switch (hState){
                 case 0:
+                    ans+=1+mindist(pads,neox,neoy,x,y);
+                    break;
                 case 3:
-                    ans+=2+dist(neox,neoy,x,y);
+                    ans+=2+mindist(pads,neox,neoy,x,y);
                     break;
                 case 1:
                 case 5:
@@ -78,7 +80,17 @@ public class HeuristicFunction1 extends QingFunction{
             }
             if(i==hostagesInfo.length())break;
         }
-        return ans+mindis+cur.agentKilledCnt();
+        return ans+cur.getDeadHostagesNumber()+cur.agentKilledCnt();
+    }
+    int mindist(ArrayList<Pair>pads,int x1,int y1,int x2,int y2){
+        int mindis = HeuristicFunction1.dist(x1,y1,x2,y2);
+        while (!pads.isEmpty()){
+            Pair padFrom = pads.remove(0);
+            Pair padTo = pads.remove(0);
+            int paddis = HeuristicFunction1.dist(x1,y1,padFrom.x,padFrom.y) + HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2);
+            mindis = Math.min(mindis,paddis);
+        }
+        return mindis;
     }
     public  static int  dist(int x1,int y1,int x2,int y2){
         return Math.abs(x1-x2)+Math.abs(y1-y2);

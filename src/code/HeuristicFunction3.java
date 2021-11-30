@@ -27,14 +27,7 @@ public class HeuristicFunction3 extends QingFunction{
         int ans=0;
         int i=0;
         int neox= cur.getNeoLocationX(),neoy= cur.getNeoLocationY();
-        int mindis = HeuristicFunction1.dist(neox,neoy,telephoneBoothx,telephoneBoothy);
-        while (!pads.isEmpty()){
-            Pair padFrom = pads.remove(0);
-            Pair padTo = pads.remove(0);
-            int paddis = HeuristicFunction1.dist(neox,neoy,padFrom.x,padFrom.y) + HeuristicFunction1.dist(padTo.x,padTo.y,telephoneBoothx,telephoneBoothy)+1;
-            mindis = Math.min(mindis,paddis);
-        }
-
+        int mindis = mindist(pads,neox,neoy,telephoneBoothx,telephoneBoothy);
 
         while(true){
             int x=0,y=0,damage=0,hState=0;
@@ -70,8 +63,10 @@ public class HeuristicFunction3 extends QingFunction{
             }
             switch (hState){
                 case 0:
+                    ans+=1+mindist(pads,neox,neoy,x,y);
+                    break;
                 case 3:
-                    ans+=2+HeuristicFunction1.dist(neox,neoy,x,y);
+                    ans+=2+mindist(pads,neox,neoy,x,y);
                     break;
                 case 1:
                 case 5:
@@ -81,7 +76,17 @@ public class HeuristicFunction3 extends QingFunction{
             }
             if(i==hostagesInfo.length())break;
         }
-        return ans+mindis+cur.agentKilledCnt();
+        return ans+cur.agentKilledCnt()+cur.getDeadHostagesNumber();
+    }
+    int mindist(ArrayList<Pair>pads,int x1,int y1,int x2,int y2){
+        int mindis = HeuristicFunction1.dist(x1,y1,x2,y2);
+        while (!pads.isEmpty()){
+            Pair padFrom = pads.remove(0);
+            Pair padTo = pads.remove(0);
+            int paddis = HeuristicFunction1.dist(x1,y1,padFrom.x,padFrom.y) + HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2);
+            mindis = Math.min(mindis,paddis);
+        }
+        return mindis;
     }
     int h(Node cur){//admissable heuristic function -> it never overestimates
         String hostagesInfo=cur.getHostageInfo();
