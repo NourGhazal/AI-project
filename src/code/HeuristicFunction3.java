@@ -27,8 +27,6 @@ public class HeuristicFunction3 extends QingFunction{
         int ans=0;
         int i=0;
         int neox= cur.getNeoLocationX(),neoy= cur.getNeoLocationY();
-//        ArrayList<Integer[]> hostages= new ArrayList<>();
-//        Integer [] info = {0,0,0};
         boolean flag = false;
         while(true){
             int x=0,y=0,damage=0,hState=0;
@@ -65,16 +63,9 @@ public class HeuristicFunction3 extends QingFunction{
             switch (hState){
                 case 0:
                     ans+=2;
-//                    break;
-
-//                    break;
-//                    mindist((ArrayList<Pair>)(pads.clone()),neox,neoy,x,y);
-//                    break;
                 case 1:
                 case 5:
                  ans+=1;
-//                    info[0]=x;info[1]=y;info[2]=hState;
-//                    hostages.add(info);
                     break;
 
             }
@@ -89,8 +80,6 @@ public class HeuristicFunction3 extends QingFunction{
             Pair padFrom1 = pads.get(i);
             Pair padTo1 = pads.get(i+1);
             for(int j=0;j<pads.size()-6;j+=4){
-//                if(j==i)
-//                    continue;
                 Pair padFrom2 = pads.get(j);
                 Pair padTo2 = pads.get(j+1);
                 int d1 = HeuristicFunction1.dist(padTo1.x,padTo1.y,padFrom2.x,padFrom2.y);
@@ -120,39 +109,6 @@ public class HeuristicFunction3 extends QingFunction{
                 }
         }
         return distance;
-//
-//        for (int i =0;i<padsdis.length;i++){
-//            Pair ourpadfrom1 = pads.get(i*4);
-//            Pair ourpadTo2 = pads.get(i*4+3);
-//
-//        }
-//        if(pads.size()>4)
-//        System.out.println(padsdis);
-//        return 0;
-//        int mindis = HeuristicFunction1.dist(x1,y1,x2,y2);
-//        for (int i =0; i<pads.size()-1;i++){
-//            Pair padFrom = pads.get(i);
-//            Pair padTo = pads.get(i+1);
-//            int paddis = HeuristicFunction1.dist(x1,y1,padFrom.x,padFrom.y) ;
-//            int hostagedis = HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2);
-//            for(int j = 0; j< pads.size()-1;j++){
-//                Pair padFrom2 = pads.get(i);
-//                Pair padTo2 = pads.get(i+1);
-//                if(padFrom.equals(padFrom2))continue;
-//                if(HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2)>(HeuristicFunction1.dist(padTo.x,padTo.y,padFrom2.x,padFrom2.y)  + HeuristicFunction1.dist(padTo2.x,padTo2.y,x2,y2)))
-//                    hostagedis  = HeuristicFunction1.dist(padTo.x,padTo.y,padFrom2.x,padFrom2.y)  + HeuristicFunction1.dist(padTo2.x,padTo2.y,x2,y2);
-//
-//            }
-//            paddis+=hostagedis;
-//            mindis = Math.min(mindis,paddis);
-//        }
-////        while (!pads.isEmpty()){
-////            Pair padFrom = pads.remove(0);
-////            Pair padTo = pads.remove(0);
-////            int paddis = HeuristicFunction1.dist(x1,y1,padFrom.x,padFrom.y) + HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2);
-////            mindis = Math.min(mindis,paddis);
-////        }
-//        return mindis;
     }
     int h(Node cur){//admissable heuristic function -> it never overestimates
         String hostagesInfo=cur.getHostageInfo();

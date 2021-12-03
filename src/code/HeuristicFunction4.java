@@ -118,8 +118,6 @@ public class HeuristicFunction4 extends QingFunction{
             Pair padFrom1 = pads.get(i);
             Pair padTo1 = pads.get(i+1);
             for(int j=0;j<pads.size()-6;j+=4){
-//                if(j==i)
-//                    continue;
                 Pair padFrom2 = pads.get(j);
                 Pair padTo2 = pads.get(j+1);
                 int d1 = HeuristicFunction1.dist(padTo1.x,padTo1.y,padFrom2.x,padFrom2.y);
@@ -149,39 +147,6 @@ public class HeuristicFunction4 extends QingFunction{
             }
         }
         return distance;
-//
-//        for (int i =0;i<padsdis.length;i++){
-//            Pair ourpadfrom1 = pads.get(i*4);
-//            Pair ourpadTo2 = pads.get(i*4+3);
-//
-//        }
-//        if(pads.size()>4)
-//        System.out.println(padsdis);
-//        return 0;
-//        int mindis = HeuristicFunction1.dist(x1,y1,x2,y2);
-//        for (int i =0; i<pads.size()-1;i++){
-//            Pair padFrom = pads.get(i);
-//            Pair padTo = pads.get(i+1);
-//            int paddis = HeuristicFunction1.dist(x1,y1,padFrom.x,padFrom.y) ;
-//            int hostagedis = HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2);
-//            for(int j = 0; j< pads.size()-1;j++){
-//                Pair padFrom2 = pads.get(i);
-//                Pair padTo2 = pads.get(i+1);
-//                if(padFrom.equals(padFrom2))continue;
-//                if(HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2)>(HeuristicFunction1.dist(padTo.x,padTo.y,padFrom2.x,padFrom2.y)  + HeuristicFunction1.dist(padTo2.x,padTo2.y,x2,y2)))
-//                    hostagedis  = HeuristicFunction1.dist(padTo.x,padTo.y,padFrom2.x,padFrom2.y)  + HeuristicFunction1.dist(padTo2.x,padTo2.y,x2,y2);
-//
-//            }
-//            paddis+=hostagedis;
-//            mindis = Math.min(mindis,paddis);
-//        }
-////        while (!pads.isEmpty()){
-////            Pair padFrom = pads.remove(0);
-////            Pair padTo = pads.remove(0);
-////            int paddis = HeuristicFunction1.dist(x1,y1,padFrom.x,padFrom.y) + HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2);
-////            mindis = Math.min(mindis,paddis);
-////        }
-//        return mindis;
     }
     int dist(int x1,int y1,int x2,int y2){
         return Math.abs(x1-x2)+Math.abs(y1-y2);

@@ -24,8 +24,7 @@ public class HeuristicFunction1 extends QingFunction{
         int ans=0;
         int i=0;
         int neox= cur.getNeoLocationX(),neoy= cur.getNeoLocationY();
-//        ArrayList<Integer[]> hostages= new ArrayList<>();
-//        Integer [] info = {0,0,0};
+
         boolean flag = false;
         while(true){
             int x=0,y=0,damage=0,hState=0;
@@ -62,16 +61,11 @@ public class HeuristicFunction1 extends QingFunction{
             switch (hState){
                 case 0:
                     ans+=2;
-//                    break;
 
-//                    break;
-//                    mindist((ArrayList<Pair>)(pads.clone()),neox,neoy,x,y);
-//                    break;
                 case 1:
                 case 5:
                     ans+=1;
-//                    info[0]=x;info[1]=y;info[2]=hState;
-//                    hostages.add(info);
+
                     break;
 
             }
@@ -86,8 +80,7 @@ public class HeuristicFunction1 extends QingFunction{
             Pair padFrom1 = pads.get(i);
             Pair padTo1 = pads.get(i+1);
             for(int j=0;j<pads.size()-6;j+=4){
-//                if(j==i)
-//                    continue;
+
                 Pair padFrom2 = pads.get(j);
                 Pair padTo2 = pads.get(j+1);
                 int d1 = HeuristicFunction1.dist(padTo1.x,padTo1.y,padFrom2.x,padFrom2.y);
