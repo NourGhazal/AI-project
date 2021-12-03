@@ -24,8 +24,9 @@ public class HeuristicFunction1 extends QingFunction{
         int ans=0;
         int i=0;
         int neox= cur.getNeoLocationX(),neoy= cur.getNeoLocationY();
-        int mindis = mindist(pads,neox,neoy,telephoneBoothx,telephoneBoothy);
-
+//        ArrayList<Integer[]> hostages= new ArrayList<>();
+//        Integer [] info = {0,0,0};
+        boolean flag = false;
         while(true){
             int x=0,y=0,damage=0,hState=0;
             while(true){
@@ -60,30 +61,63 @@ public class HeuristicFunction1 extends QingFunction{
             }
             switch (hState){
                 case 0:
-                    ans+=1+mindist(pads,neox,neoy,x,y);
-                    break;
-                case 3:
-                    ans+=2+mindist(pads,neox,neoy,x,y);
-                    break;
+                    ans+=2;
+//                    break;
+
+//                    break;
+//                    mindist((ArrayList<Pair>)(pads.clone()),neox,neoy,x,y);
+//                    break;
                 case 1:
                 case 5:
-                    ans+=mindis;
+                    ans+=1;
+//                    info[0]=x;info[1]=y;info[2]=hState;
+//                    hostages.add(info);
                     break;
 
             }
             if(i==hostagesInfo.length())break;
         }
-        return ans;
+        return  ans + mindist(pads,neox,neoy,telephoneBoothx,telephoneBoothy);
     }
     int mindist(ArrayList<Pair>pads,int x1,int y1,int x2,int y2){
-        int mindis = HeuristicFunction1.dist(x1,y1,x2,y2);
-        while (!pads.isEmpty()){
-            Pair padFrom = pads.remove(0);
-            Pair padTo = pads.remove(0);
-            int paddis = HeuristicFunction1.dist(x1,y1,padFrom.x,padFrom.y) + HeuristicFunction1.dist(padTo.x,padTo.y,x2,y2);
-            mindis = Math.min(mindis,paddis);
+        int disbooth = HeuristicFunction1.dist(x1,y1,x2,y2);
+        int [][] padsdis = new int[pads.size()/4 ][pads.size()/4];
+        for (int i =0; i<pads.size()-1;i+=4){
+            Pair padFrom1 = pads.get(i);
+            Pair padTo1 = pads.get(i+1);
+            for(int j=0;j<pads.size()-6;j+=4){
+//                if(j==i)
+//                    continue;
+                Pair padFrom2 = pads.get(j);
+                Pair padTo2 = pads.get(j+1);
+                int d1 = HeuristicFunction1.dist(padTo1.x,padTo1.y,padFrom2.x,padFrom2.y);
+                int d2 = HeuristicFunction1.dist(padTo2.x,padTo2.y,padFrom1.x,padFrom1.y);
+                padsdis[i/4][j/2] = Math.min(d1,d2);
+            }
+
         }
-        return mindis;
+        int padboothdis []= new int[pads.size()/2];
+        for (int i =0;i<pads.size()-1;i+=2){
+            Pair padto =  pads.get(i+1);
+            padboothdis[i/2] = HeuristicFunction1.dist(padto.x,padto.y,x1,y1);
+        }
+        int padneodis []= new int[pads.size()/2];
+        for (int i =0;i<pads.size()-1;i+=2){
+            Pair padfrom =  pads.get(i);
+            padneodis[i/2] = HeuristicFunction1.dist(padfrom.x,padfrom.y,x1,y1);
+        }
+        int distance = disbooth;
+        for(int i =0;i<padneodis.length;i++){
+            int neocost = padboothdis[i];
+            if(i<padsdis.length){
+                for(int k=0 ; k < padsdis[i].length;k++){
+                    int cost = neocost + padsdis[i][k] + padboothdis[k];
+                    distance= Math.min(cost,distance);
+                }
+            }
+        }
+        return distance;
+
     }
     public  static int  dist(int x1,int y1,int x2,int y2){
         return Math.abs(x1-x2)+Math.abs(y1-y2);

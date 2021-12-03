@@ -714,11 +714,11 @@ public class Matrix extends SearchProblem {
         func.setPads(pads);
 		return bestFirstSearch(problem,func);
 	}
-	public static Node greedySearch2(SearchProblem problem,int telephoneBoothX,int telephoneBoothY){
+	public static Node greedySearch2(SearchProblem problem,int telephoneBoothX,int telephoneBoothY,ArrayList<Pair>pads){
 		HeuristicFunction2 func=new HeuristicFunction2();
 		func.setTelephoneBoothx(telephoneBoothX);
 		func.setTelephoneBoothy(telephoneBoothY);
-
+		func.setPads(pads);
 		return bestFirstSearch(problem,func);
 	}
 	public static Node AStar1(SearchProblem problem,int telephoneBoothX,int telephoneBoothY,ArrayList<Pair>pads){
@@ -956,7 +956,7 @@ public class Matrix extends SearchProblem {
 				ans = greedySearch1(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY(),Matrix.getPads(grid));
 				break;
 			case "GR2":
-				ans = greedySearch2(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY());
+				ans = greedySearch2(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY(),Matrix.getPads(grid));
 				break;
 			case "UC":
 				ans = UniformCostSearch(problem);
