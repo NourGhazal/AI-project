@@ -59,54 +59,8 @@ public class Matrix extends SearchProblem {
 		return isTelephoneBooth(cur.getNeoLocationX(),cur.getNeoLocationY()) && cur.getNeoDamage()<100;
 	}
 	public int pathCost(Node curr){
-//		int i=0;
-//		String hostagesInfo=curr.getHostageInfo();
-//		int hosdam = 0;
-//		while(true){
-//			int x=0,y=0,damage=0,hState=0;
-//			while(true){
-//				if(hostagesInfo.charAt(i)==','){
-//					i++;
-//					break;
-//				}
-//				x*=10;x+=hostagesInfo.charAt(i)-'0';
-//				i++;
-//			}
-//			while(true){
-//				if(hostagesInfo.charAt(i)==','){
-//					i++;
-//					break;
-//				}
-//				y*=10;y+=hostagesInfo.charAt(i)-'0';
-//				i++;
-//			}
-//			while(true){
-//				if(hostagesInfo.charAt(i)==','){
-//					i++;
-//					break;
-//				}
-//				damage*=10;damage+=hostagesInfo.charAt(i)-'0';i++;
-//			}
-//
-//			while(true){
-//				if(i==hostagesInfo.length() || hostagesInfo.charAt(i)==','){
-//					if(i<hostagesInfo.length())i++;
-//					break;
-//				}
-//				hState*=10;hState+=hostagesInfo.charAt(i)-'0';i++;
-//			}
-//			if(hState == 0 || hState == 3 ||hState == 5){
-//				hosdam+=damage;
-//			}
-//			if(i==hostagesInfo.length())break;
-//		}
-//
-//		int ans=hosdam+curr.agentKilledCnt();
 
-		int cost = curr.agentKilledCnt()+ curr.getDeadHostagesNumber()*266;
-		if(curr.getParent()!=null)
-		cost += curr.getParent().getCost();
-
+		int cost =  curr.agentKilledCnt()*10000+ curr.getDeadHostagesNumber()*10000*226 + curr.getDepth();
 		curr.setCost(cost);
 		return cost;
 	}
