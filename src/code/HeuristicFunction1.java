@@ -73,7 +73,7 @@ public class HeuristicFunction1 extends QingFunction{
             }
             if(i==hostagesInfo.length())break;
         }
-        return ans+cur.agentKilledCnt()+cur.getDeadHostagesNumber();
+        return ans;
     }
     int mindist(ArrayList<Pair>pads,int x1,int y1,int x2,int y2){
         int mindis = HeuristicFunction1.dist(x1,y1,x2,y2);

@@ -103,7 +103,7 @@ public class Matrix extends SearchProblem {
 //
 //		int ans=hosdam+curr.agentKilledCnt();
 
-		int cost = curr.agentKilledCnt()*curr.getDepth()+ curr.getDeadHostagesNumber()*curr.getDepth()*10+curr.getDepth();
+		int cost = curr.agentKilledCnt()+ curr.getDeadHostagesNumber()*266;
 		if(curr.getParent()!=null)
 		cost += curr.getParent().getCost();
 
@@ -728,8 +728,12 @@ public class Matrix extends SearchProblem {
 		h3.setPads(pads);
 		return generalSearch(problem,h3,Integer.MAX_VALUE);
 	}
-	public static Node AStar2(SearchProblem problem){
-		return generalSearch(problem,new HeuristicFunction4(),Integer.MAX_VALUE);
+	public static Node AStar2(SearchProblem problem,int telephoneBoothX,int telephoneBoothY,ArrayList<Pair>pads){
+		HeuristicFunction4 h4 = new HeuristicFunction4();
+		h4.setTelephoneBoothx(telephoneBoothX);
+		h4.setTelephoneBoothy(telephoneBoothY);
+		h4.setPads(pads);
+	return generalSearch(problem,h4,Integer.MAX_VALUE);
 	}
 	public static Node bestFirstSearch(SearchProblem problem,QingFunction function){
 		return generalSearch(problem,function,Integer.MAX_VALUE);
@@ -961,7 +965,7 @@ public class Matrix extends SearchProblem {
 				ans = AStar1(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY(),Matrix.getPads(grid));;
 				break;
 			case "AS2":
-				ans = AStar2(problem);
+				ans = AStar2(problem,problem.getTelephoneBoothX(),problem.getTelephoneBoothY(),Matrix.getPads(grid));
 				break;
 		}
 		System.out.println("Nodes = "+(totNodes));
@@ -1277,10 +1281,35 @@ public class Matrix extends SearchProblem {
 	}
 
 	public static void main(String[]args) {
-		String grid = "5,5;2;3,0;4,3;2,1,2,2,3,1,0,0,1,1,4,2,3,3,1,3,0,1;2,4,3,2,3,4,0,4;4,4,4,0,4,0,4,4;1,4,57,2,0,46";
-		String solution = solve(grid,"AS2",false);
-		System.out.println("grid\n"+grid);
-		System.out.println("sol\n"+solution);
+//		String grid = "5,5;4;1,1;4,1;2,4,0,4,3,2,3,0,4,2,0,1,1,3,2,1;4,0,4,4,1,0;2,0,0,2,0,2,2,0;0,0,62,4,3,45,3,3,39,2,3,40";
+		String[] grids= {
+				"5,5;2;3,4;1,2;0,3,1,4;2,3;4,4,0,2,0,2,4,4;2,2,91,2,4,62",
+				"5,5;1;1,4;1,0;0,4;0,0,2,2;3,4,4,2,4,2,3,4;0,2,32,0,1,38",
+				"5,5;2;3,2;0,1;4,1;0,3;1,2,4,2,4,2,1,2,0,4,3,0,3,0,0,4;1,1,77,3,4,34",
+				"5,5;1;0,4;4,4;0,3,1,4,2,1,3,0,4,1;4,0;2,4,3,4,3,4,2,4;0,2,98,1,2,98,2,2,98,3,2,98,4,2,98,2,0,1",
+				"5,5;1;0,4;4,4;0,3,1,4,2,1,3,0,4,1;4,0;2,4,3,4,3,4,2,4;0,2,98,1,2,98,2,2,98,3,2,98,4,2,98,2,0,98,1,0,98",
+				"5,5;2;0,4;3,4;3,1,1,1;2,3;3,0,0,1,0,1,3,0;4,2,54,4,0,85,1,0,43",
+				"5,5;2;3,0;4,3;2,1,2,2,3,1,0,0,1,1,4,2,3,3,1,3,0,1;2,4,3,2,3,4,0,4;4,4,4,0,4,0,4,4;1,4,57,2,0,46",
+				"5,5;3;1,3;4,0;0,1,3,2,4,3,2,4,0,4;3,4,3,0,4,2;1,4,1,2,1,2,1,4,0,3,1,0,1,0,0,3;4,4,45,3,3,12,0,2,88",
+				"5,5;2;4,3;2,1;2,0,0,4,0,3,0,1;3,1,3,2;4,4,3,3,3,3,4,4;4,0,17,1,2,54,0,0,46,4,1,22",
+				"5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80",
+				"5,5;4;1,1;4,1;2,4,0,4,3,2,3,0,4,2,0,1,1,3,2,1;4,0,4,4,1,0;2,0,0,2,0,2,2,0;0,0,62,4,3,45,3,3,39,2,3,40"
+		};
+		String startegy[] = {"UC","AS1","AS2"};
+		for(int i =0; i <grids.length;i++){
+			for (int j=0;j<startegy.length;j++){
+				String solution = solve(grids[i],startegy[j],false);
+				String[] costs = solution.split(";");
+				if(costs.length>=3)
+				System.out.println("Strategy: "+startegy[j]+" Grid: "+i+" cost: "+costs[1]+" "+costs[2]);
+				else{
+					System.out.println(solution);
+				}
+			}
+		}
+//		String solution = solve(grid,"AS2",false);
+//		System.out.println("grid\n"+grid);
+//		System.out.println("sol\n"+solution);
 	}
 
 }
